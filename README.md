@@ -172,5 +172,5 @@ The [outbound-custom-event-payload.yaml](outbound-custom-event-payload.yaml) sho
 }
 ```
 
-In the payload examples above, the key "my__event__e" is the developer name for the outbound message customer event configured in salesforce setup. The keys "my__event__field1__c", "my__event__field2__c", and "my__event__field3__c" are corresponding custom fields "Custom Event Channel Address Id Field", "Custom Event Payload Field", and "Custom Event Recipient Field" defined in the outbound message customer event.
+Note: In the payload examples above, the key "my__event__e" is the developer name for the outbound message customer event configured in salesforce setup. The keys "my__event__field1__c", "my__event__field2__c", and "my__event__field3__c" are corresponding custom fields "Custom Event Channel Address Id Field", "Custom Event Payload Field", and "Custom Event Recipient Field" defined in the outbound message customer event.
 
