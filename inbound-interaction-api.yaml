@@ -131,7 +131,7 @@ components:
       type: "object"
       properties:
         from:
-          description: "End user channel address."
+          description: "End user client identifier"
           type: "string"
           maxLength: 255
           example: ""
@@ -162,7 +162,7 @@ components:
         properties:
           contentLength:
             type: "integer"
-            description: "Indicates the size of the file data"
+            description: "Indicates the size of the file data in bytes"
           id:
             type: "string"
             example: "57904eb6-5352-4c5e-adf6-5f100572cf54"
@@ -326,7 +326,7 @@ paths:
       - name: "Authorization"
         schema:
           type: "string"
-        description: ""
+        description: "The access token generated to make requests to the Interaction Service APIs"
         in: "header"
         required: true
         example: "Bearer XXXXXX"
