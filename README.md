@@ -12,18 +12,18 @@ Example request sending interaction, be sure to replace placeholder values `<..>
 - Interaction request with entryType "Message"
 
 ```
-curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "AuthorizationContext: <AuthorizationContext>" -H "content-type:multipart/form-data" -H "RequestId: f8f81c06-c06a-4784-b96c-ca95d3321bd9" -X POST -F "json={
+curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "AuthorizationContext: <AuthorizationContext>" -H "content-type:multipart/form-data" -H "RequestId: <RequestId>" -X POST -F "json={
   \"to\": \"<ChannelAddressIdentifier>\",
   \"from\": \"<EndUserClientIdentifier>\",
   \"interactions\": [{
-    \"timestamp\": 1688190840000,
+    \"timestamp\": <Timestamp in Unix Epoch>,
     \"interactionType\": \"EntryInteraction\",
     \"payload\": {
-      \"id\": \"f7904eb6-5352-4c5e-adf6-5f100572cf5d\",
+      \"id\": \"<PayloadId>\",
       \"entryType\": \"Message\",
       \"abstractMessage\": {
         \"messageType\": \"StaticContentMessage\",
-        \"id\": \"f7904eb6-5352-4c5e-adf6-5f100572cf5d\",
+        \"id\": \"<MessageId>\",
         \"staticContent\": {
           \"formatType\": \"Text\",
           \"text\": \"Hi there\"
@@ -37,16 +37,16 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "Author
 - Interaction request with entryType "TypingStartedIndicator"
 
 ```
-curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "AuthorizationContext: <AuthorizationContext>" -H "content-type:multipart/form-data"  -H "RequestId: f8f81c06-c06a-4784-b96c-ca95d3321bd9" -X POST -F "json={
+curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "AuthorizationContext: <AuthorizationContext>" -H "content-type:multipart/form-data"  -H "RequestId: <RequestId>" -X POST -F "json={
   \"to\": \"<ChannelAddressIdentifier>\",
   \"from\": \"<EndUserClientIdentifier>\",
   \"interactions\": [{
-    \"timestamp\": 1688190840000,
+    \"timestamp\": <TImestamp in Unix Epoch>,
     \"interactionType\": \"EntryInteraction\",
     \"payload\": {
-      \"id\": \"f7904eb6-5352-4c5e-adf6-5f100572cf5d\",
+      \"id\": \"<PayloadId>\",
       \"entryType\": \"TypingStartedIndicator\",
-      \"timestamp\": 1688190840000
+      \"timestamp\": <Timestamp in Unix Epoch>
     }
   }]
 };type=application/json" http://localhost:8085/api/v1/interactions
@@ -59,12 +59,12 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "Author
   \"to\": \"<ChannelAddressIdentifier>\",
   \"from\": \"<EndUserClientIdentifier>\",
   \"interactions\": [{
-    \"timestamp\": 1688190840000,
+    \"timestamp\": <Timestamp in Unix Epoch>,
     \"interactionType\": \"EntryInteraction\",
     \"payload\": {
-      \"id\": \"f7904eb6-5352-4c5e-adf6-5f100572cf5d\",
+      \"id\": \"<PayloadId>\",
       \"entryType\": \"TypingStoppedIndicator\",
-      \"timestamp\": 1688190840000
+      \"timestamp\": <Timestamp in Unix Epoch>
     }
   }]
 };type=application/json" http://localhost:8085/api/v1/interactions
@@ -73,14 +73,14 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "Author
 - Interaction request with entryType "MessageDeliveryFailed"
 
 ```
-curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "AuthorizationContext: <AuthorizationContext>" -H "content-type:multipart/form-data"  -H "RequestId: f8f81c06-c06a-4784-b96c-ca95d3321bd9" -X POST -F "json={
+curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "AuthorizationContext: <AuthorizationContext>" -H "content-type:multipart/form-data"  -H "RequestId: <RequestId>" -X POST -F "json={
   \"to\": \"<ChannelAddressIdentifier>\",
   \"from\": \"<EndUserClientIdentifier>\",
   \"interactions\": [{
-    \"timestamp\": 1688190840000,
+    \"timestamp\": <Timestamp in Unix Epoch>,
     \"interactionType\": \"EntryInteraction\",
     \"payload\": {
-      \"id\": \"f7904eb6-5352-4c5e-adf6-5f100572cf5d\",
+      \"id\": \"<PayloadId>\",
       \"entryType\": \"MessageDeliveryFailed\",
       \"failedConversationEntryIdentifier\": \"<FailedConversationEntryIdentifier>\",
       \"recipient\": {
@@ -107,18 +107,18 @@ Prerequisites for getting file attachment upload working in local
 - Please delete the bucket once local testing is complete.
 
 ```
-curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "AuthorizationContext: <AuthorizationContext>" -H "content-type:multipart/form-data" -H "RequestId: f8f81c06-c06a-4784-b96c-ca95d3321bd9" -X POST -F "json={
+curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "AuthorizationContext: <AuthorizationContext>" -H "content-type:multipart/form-data" -H "RequestId: <RequestId>" -X POST -F "json={
   \"to\": \"<ChannelAddressIdentifier>\",
   \"from\": \"<EndUserClientIdentifier>\",
   \"interactions\": [{
-    \"timestamp\": 1688190840000,
+    \"timestamp\": <Timestamp in Unix Epoch>,
     \"interactionType\": \"AttachmentInteraction\",
-    \"id\": \"g8904eb6-5352-4c5e-adf6-5f100572cf6e\",
+    \"id\": \"<InteractionId>\",
     \"attachmentIndex\": 0,
     \"contentLength\": 10000,
     \"text\": \"This is my file\"
   }]
-};type=application/json" -F "attachments=@/Users/drohra/Downloads/image.png" http://localhost:8085/api/v1/interactions
+};type=application/json" -F "attachments=@/Users/<path to an image>" http://localhost:8085/api/v1/interactions
 ```
 
 **Note**: When test the example request commands above, replace the request url "http://localhost:8085/api/v1/interactions" with an url with the pattern of "https://\<your org my domain name\>.my.salesforce-scrt.com/api/v1/interactions".
@@ -132,11 +132,11 @@ The [outbound-custom-event-payload.yaml](outbound-custom-event-payload.yaml) sho
 
 ```
 {
-  replayId: '2278491',
+  replayId: '<replayId>',
   payload: {
     my__event__e {
       CreatedDate: 1690344475579n,
-      CreatedById: '13f7e7ad-2431-4cf7-a048-fe9556f847bc',
+      CreatedById: '<EndUserIdentifierId>',
       my__event__field1__c: {
         string: 'b0ffeafe-0d89-4338-b14a-172ad203f22a'
       },
