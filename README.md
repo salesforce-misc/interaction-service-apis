@@ -151,7 +151,7 @@ The [outbound-custom-event-payload.yaml](outbound-custom-event-payload.yaml) sho
 }
 ```
 
-Here `"subject":"005xx0000012345"` is the salesforce id of sender, which is equivalent to `senderDisplayName`
+Here `"subject":"005xx0000012345"` is the salesforce id of sender.
 
 
 ### The outbound message with attachment
