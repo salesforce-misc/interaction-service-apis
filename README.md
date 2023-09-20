@@ -41,7 +41,7 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "Author
   \"to\": \"<ChannelAddressIdentifier>\",
   \"from\": \"<EndUserClientIdentifier>\",
   \"interactions\": [{
-    \"timestamp\": <TImestamp in Unix Epoch>,
+    \"timestamp\": <Timestamp in Unix Epoch>,
     \"interactionType\": \"EntryInteraction\",
     \"payload\": {
       \"id\": \"<PayloadId>\",
