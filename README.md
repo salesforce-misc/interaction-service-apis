@@ -143,8 +143,6 @@ The [outbound-custom-event-payload.yaml](outbound-custom-event-payload.yaml) sho
       my__event__field2__c: {
         string: '{"senderDisplayName":"John Dow","identifier":"56e10dce-2fd3-4ab6-91bf-f55827ad0280","entryType":"Message","entryPayload":{"entryType":"Message","id":"56e10dce-2fd3-4ab6-91bf-f55827ad0280","abstractMessage":{"messageType":"StaticContentMessage","id":"56e10dce-2fd3-4ab6-91bf-f55827ad0280","staticContent":{"formatType":"Text","text":"Hi, how are you?"}},"messageReason":null},"sender":{"appType":"agent","subject":"005xx0000012345","role":"Agent"},"transcriptedTimestamp":1690344475508,"clientTimestamp":1690344475409,"clientDuration":0}'
       },
-      // Here "subject":"005xx0000012345" is the salesforce id of sender, which is equivalent to senderDisplayName
-
       my__event__recipientField__c: {
         string: '{"appType":"custom","subject":"David Wood","role":"EndUser"}'
       }
@@ -152,6 +150,8 @@ The [outbound-custom-event-payload.yaml](outbound-custom-event-payload.yaml) sho
   }
 }
 ```
+
+Here `"subject":"005xx0000012345"` is the salesforce id of sender, which is equivalent to `senderDisplayName`
 
 
 ### The outbound message with attachment
