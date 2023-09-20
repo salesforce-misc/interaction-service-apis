@@ -19,7 +19,7 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "Author
     \"timestamp\": <Timestamp in Unix Epoch>,
     \"interactionType\": \"EntryInteraction\",
     \"payload\": {
-      \"id\": \"<PayloadId>\",
+      \"id\": \"<MessageId>\",
       \"entryType\": \"Message\",
       \"abstractMessage\": {
         \"messageType\": \"StaticContentMessage\",
@@ -55,14 +55,14 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "Author
 - Interaction request with entryType "TypingStoppedIndicator"
 
 ```
-curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "AuthorizationContext: <AuthorizationContext>" -H "content-type:multipart/form-data" -H "RequestId: f8f81c06-c06a-4784-b96c-ca95d3321bd9" -X POST -F "json={
+curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "AuthorizationContext: <AuthorizationContext>" -H "content-type:multipart/form-data" -H "RequestId: <RequestId>" -X POST -F "json={
   \"to\": \"<ChannelAddressIdentifier>\",
   \"from\": \"<EndUserClientIdentifier>\",
   \"interactions\": [{
     \"timestamp\": <Timestamp in Unix Epoch>,
     \"interactionType\": \"EntryInteraction\",
     \"payload\": {
-      \"id\": \"<PayloadId>\",
+      \"id\": \"<MessageId>\",
       \"entryType\": \"TypingStoppedIndicator\",
       \"timestamp\": <Timestamp in Unix Epoch>
     }
@@ -80,7 +80,7 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "Author
     \"timestamp\": <Timestamp in Unix Epoch>,
     \"interactionType\": \"EntryInteraction\",
     \"payload\": {
-      \"id\": \"<PayloadId>\",
+      \"id\": \"<MessageId>\",
       \"entryType\": \"MessageDeliveryFailed\",
       \"failedConversationEntryIdentifier\": \"<FailedConversationEntryIdentifier>\",
       \"recipient\": {
@@ -113,12 +113,12 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "Author
   \"interactions\": [{
     \"timestamp\": <Timestamp in Unix Epoch>,
     \"interactionType\": \"AttachmentInteraction\",
-    \"id\": \"<InteractionId>\",
+    \"id\": \"<MessageId>\",
     \"attachmentIndex\": 0,
     \"contentLength\": 10000,
     \"text\": \"This is my file\"
   }]
-};type=application/json" -F "attachments=@/Users/<path to an image>" http://localhost:8085/api/v1/interactions
+};type=application/json" -F "attachments=@/<path to an image>" http://localhost:8085/api/v1/interactions
 ```
 
 **Note**: When test the example request commands above, replace the request url "http://localhost:8085/api/v1/interactions" with an url with the pattern of "https://\<your org my domain name\>.my.salesforce-scrt.com/api/v1/interactions".
@@ -132,11 +132,11 @@ The [outbound-custom-event-payload.yaml](outbound-custom-event-payload.yaml) sho
 
 ```
 {
-  replayId: '<replayId>',
+  replayId: '<ReplayId>',
   payload: {
     my__event__e {
       CreatedDate: 1690344475579n,
-      CreatedById: '<EndUserIdentifierId>',
+      CreatedById: '<EndUserClientIdentifier>',
       my__event__field1__c: {
         string: 'b0ffeafe-0d89-4338-b14a-172ad203f22a'
       },
@@ -155,11 +155,11 @@ The [outbound-custom-event-payload.yaml](outbound-custom-event-payload.yaml) sho
 ### The outbound message with attachment
 ```
 {
-  replayId: '2278491',
+  replayId: '<ReplayId>',
   payload: {
     my__event__e {
       CreatedDate: 1690344475579n,
-      CreatedById: '13f7e7ad-2431-4cf7-a048-fe9556f847bc',
+      CreatedById: '<EndUserClientIdentifier>',
       my__event__field1__c: {
         string: 'b0ffeafe-0d89-4338-b14a-172ad203f22a'
       },
