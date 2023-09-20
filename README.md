@@ -19,11 +19,11 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "Author
     \"timestamp\": <Timestamp in Unix Epoch>,
     \"interactionType\": \"EntryInteraction\",
     \"payload\": {
-      \"id\": \"<MessageId>\",
+      \"id\": \"<InteractionId>\",
       \"entryType\": \"Message\",
       \"abstractMessage\": {
         \"messageType\": \"StaticContentMessage\",
-        \"id\": \"<MessageId>\",
+        \"id\": \"<InteractionId>\",
         \"staticContent\": {
           \"formatType\": \"Text\",
           \"text\": \"Hi there\"
@@ -44,7 +44,7 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "Author
     \"timestamp\": <Timestamp in Unix Epoch>,
     \"interactionType\": \"EntryInteraction\",
     \"payload\": {
-      \"id\": \"<PayloadId>\",
+      \"id\": \"<InteractionId>\",
       \"entryType\": \"TypingStartedIndicator\",
       \"timestamp\": <Timestamp in Unix Epoch>
     }
@@ -62,7 +62,7 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "Author
     \"timestamp\": <Timestamp in Unix Epoch>,
     \"interactionType\": \"EntryInteraction\",
     \"payload\": {
-      \"id\": \"<MessageId>\",
+      \"id\": \"<InteractionId>\",
       \"entryType\": \"TypingStoppedIndicator\",
       \"timestamp\": <Timestamp in Unix Epoch>
     }
@@ -80,7 +80,7 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "Author
     \"timestamp\": <Timestamp in Unix Epoch>,
     \"interactionType\": \"EntryInteraction\",
     \"payload\": {
-      \"id\": \"<MessageId>\",
+      \"id\": \"<InteractionId>\",
       \"entryType\": \"MessageDeliveryFailed\",
       \"failedConversationEntryIdentifier\": \"<FailedConversationEntryIdentifier>\",
       \"recipient\": {
@@ -113,7 +113,7 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "Author
   \"interactions\": [{
     \"timestamp\": <Timestamp in Unix Epoch>,
     \"interactionType\": \"AttachmentInteraction\",
-    \"id\": \"<MessageId>\",
+    \"id\": \"<InteractionId>\",
     \"attachmentIndex\": 0,
     \"contentLength\": 10000,
     \"text\": \"This is my file\"
@@ -141,7 +141,7 @@ The [outbound-custom-event-payload.yaml](outbound-custom-event-payload.yaml) sho
         string: 'b0ffeafe-0d89-4338-b14a-172ad203f22a'
       },
       my__event__field2__c: {
-        string: '{"senderDisplayName":"John Dow","identifier":"56e10dce-2fd3-4ab6-91bf-f55827ad0280","entryType":"Message","entryPayload":{"entryType":"Message","id":"56e10dce-2fd3-4ab6-91bf-f55827ad0280","abstractMessage":{"messageType":"StaticContentMessage","id":"56e10dce-2fd3-4ab6-91bf-f55827ad0280","staticContent":{"formatType":"Text","text":"Hi, how are you?"}},"messageReason":null},"sender":{"appType":"agent","subject":"005xx0000012345","role":"Agent"},"transcriptedTimestamp":1690344475508,"clientTimestamp":1690344475409,"clientDuration":0}'
+        string: '{"senderDisplayName":"John Dow","identifier":"<EndUserClientIdentifier>,"entryType":"Message","entryPayload":{"entryType":"Message","id":"<InteractionId>","abstractMessage":{"messageType":"StaticContentMessage","id":"<InteractionId>","staticContent":{"formatType":"Text","text":"Hi, how are you?"}},"messageReason":null},"sender":{"appType":"agent","subject":"005xx0000012345","role":"Agent"},"transcriptedTimestamp":<Timestamp in Unix Epoch>,"clientTimestamp":<Timestamp in Unix Epoch>,"clientDuration":0}'
       },
       my__event__field3__c: {
         string: '{"appType":"custom","subject":"David Wood","role":"EndUser"}'
@@ -164,7 +164,7 @@ The [outbound-custom-event-payload.yaml](outbound-custom-event-payload.yaml) sho
         string: 'b0ffeafe-0d89-4338-b14a-172ad203f22a'
       },
       my__event__field2__c: {
-        string: '{"senderDisplayName":"John Dow","identifier":"80bb78b1-8240-4e22-ac55-5d517231ca1e","entryType":"Message","entryPayload":{"entryType":"Message","id":"80bb78b1-8240-4e22-ac55-5d517231ca1e","abstractMessage":{"messageType":"StaticContentMessage","id":"80bb78b1-8240-4e22-ac55-5d517231ca1e","staticContent":{"formatType":"Attachments","text":"did you get my file","attachments":[{"name":"BYO-Middleware-Impl.png","attachmentUploadResult":null,"id":"4f3c9d65-acd6-4151-8ac7-6ae1ae46531a","mimeType":"image/png","url":"https://byoccom4-dev-ed--c.stmfa.stm.documentforce.com/sfc/dist/version/download/?oid=00DRM000000O8Qy&ids=068RM0000002ACb&d=%2Fa%2FRM00000000uI%2FcEus0p20sO6Kwp6NKwMI2WeprWXvR9ke7Zp7f0_MTrE&asPdf=false","referenceId":"1e544040-52c8-40f6-a14d-5bc123c5cae4"}]}},"messageReason":null},"sender":{"appType":"agent","subject":"005RM000002ks3p","role":"Agent"},"transcriptedTimestamp":1690679469883,"clientTimestamp":1690679468868,"clientDuration":0}'
+        string: '{"senderDisplayName":"John Dow","identifier":"<EndUserClientIdentifier>","entryType":"Message","entryPayload":{"entryType":"Message","id":"<InteractionId>","abstractMessage":{"messageType":"StaticContentMessage","id":"<InteractionId>","staticContent":{"formatType":"Attachments","text":"did you get my file","attachments":[{"name":"BYO-Middleware-Impl.png","attachmentUploadResult":null,"id":"4f3c9d65-acd6-4151-8ac7-6ae1ae46531a","mimeType":"image/png","url":"https://byoccom4-dev-ed--c.stmfa.stm.documentforce.com/sfc/dist/version/download/?oid=00DRM000000O8Qy&ids=068RM0000002ACb&d=%2Fa%2FRM00000000uI%2FcEus0p20sO6Kwp6NKwMI2WeprWXvR9ke7Zp7f0_MTrE&asPdf=false","referenceId":"<ReferenceId>"}]}},"messageReason":null},"sender":{"appType":"agent","subject":"005RM000002ks3p","role":"Agent"},"transcriptedTimestamp":<Timestamp in Unix Epoch>,"clientTimestamp":<Timestamp in Unix Epoch>,"clientDuration":0}'
       },
       my__event__field3__c: {
         string: '{"appType":"custom","subject":"David Wood","role":"EndUser"}'
