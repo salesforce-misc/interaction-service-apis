@@ -128,7 +128,7 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "Author
 The [outbound-custom-event-payload.yaml](outbound-custom-event-payload.yaml) shows the outbound message custom event schema. Following are examples of the custom event payload received in "data" listener of the custome event after subscribe the event by topic name "my__event__e" shown in payload below for outbound message.
 
 
-### The outbound message without attachment (Deprecated, See here for the new outbound message event structure)
+### The outbound message without attachment (Deprecated, See below for the new outbound message event structure)
 
 ```
 {
@@ -154,7 +154,7 @@ The [outbound-custom-event-payload.yaml](outbound-custom-event-payload.yaml) sho
 Here `"subject":"005xx0000012345"` is the salesforce id of sender.
 
 
-### The outbound message with attachment (Deprecated, See here for the new outbound message event structure)
+### The outbound message with attachment (Deprecated, See below for the new outbound message event structure)
 ```
 {
   replayId: '2278491',
@@ -176,7 +176,7 @@ Here `"subject":"005xx0000012345"` is the salesforce id of sender.
 }
 ```
 
-### The outbound message without attachment
+### The outbound message without attachment (Recommended latest schema structure)
 
 ```
 {
@@ -197,7 +197,7 @@ Here `"subject":"005xx0000012345"` is the salesforce id of sender.
 Here `"subject":"005xx0000012345"` is the salesforce id of sender.
 
 
-### The outbound message with attachment
+### The outbound message with attachment (Recommended latest schema structure)
 ```
 {
   replayId: '2278491',
