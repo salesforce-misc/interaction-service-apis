@@ -472,6 +472,13 @@ paths:
           in: "header"
           required: true
           example: "<TBA>"
+        - name: RequestId
+          in: header
+          description: "UUID that references this request"
+          required: true
+          schema:
+            type: "string"
+          example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
 info:
   title: "Interaction"
   version: "0.0.1"
