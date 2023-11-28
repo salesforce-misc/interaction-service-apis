@@ -3,9 +3,13 @@ The interaction service APIs covers both inbound message interaction request sch
 
 
 ## inbound-interaction-api.yaml
-The [inbound-interaction-api.yaml](inbound-interaction-api.yaml) shows the inbound message interaction request schema. Following are examples of the curl commands to test the inbound requests for different interactionType: "EntryInteraction" and "AttachmentInteraction".
+The [inbound-interaction-api.yaml](inbound-interaction-api.yaml) shows the inbound message interaction request schema. 
 
 Follow instructions in [Connected App](https://git.soma.salesforce.com/service-cloud-realtime/scrt2-interaction-service/blob/master/CONNECTED_APP.md) to setup connected app and generate access token which will be used in example curl commands below.
+
+### Interaction API
+
+Following are examples of the curl commands to test the inbound requests for different interactionType: "EntryInteraction" and "AttachmentInteraction".
 
 Example request sending interaction, be sure to replace placeholder values `<..>` and `attachments` part can be optional.
 
@@ -123,6 +127,53 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "Author
 
 **Note**: When test the example request commands above, replace the request url "http://localhost:8085/api/v1/interactions" with an url with the pattern of "https://\<your org my domain name\>.my.salesforce-scrt.com/api/v1/interactions".
 
+### AgentWork API
+
+AgentWork API only applies for Partner Messaging for CCaaS. Following are examples of the curl commands to test the agent work requests for different capacity paths.
+
+Example request creating agent work, be sure to replace placeholder values `<..>`
+
+- AgentWork request with capacity percentage
+
+```bash
+curl -v -H $'Authorization: Bearer <AccessToken>' -H "content-type:application/json" -H "OrgId:<OrgId>" -H "AuthorizationContext:<AuthorizationContext>"  -H "RequestId: <RequestId>" -X POST -d "{
+  \"userId\": \"<UserId>\",
+  \"workItemId\": \"<WorkItemId>\",
+  \"capacityPercentage\": <CapacityPercentage>,
+   \"routingContext\": {
+    \"conversationIdentifier\": \"<ConversationId>\",
+    \"routingType\": \"<RoutingType>\",
+    \"routingCorrelationId\": \"<EventId>\"
+  }
+}"  http://localhost:8085/api/v1/agentWork
+```
+
+- AgentWork request with capacity weight
+
+```bash
+curl -v -H $'Authorization: Bearer <AccessToken>' -H "content-type:application/json" -H "OrgId:<OrgId>" -H "AuthorizationContext:<AuthorizationContext>"  -H "RequestId: <RequestId>" -X POST -d "{
+  \"userId\": \"<UserId>\",
+  \"workItemId\": \"<WorkItemId>\",
+  \"capacityWeight\": <CapacityWeight>,
+   \"routingContext\": {
+    \"conversationIdentifier\": \"<ConversationId>\",
+    \"routingType\": \"<RoutingType>\",
+    \"routingCorrelationId\": \"<EventId>\"
+  }
+}"  http://localhost:8085/api/v1/agentWork
+```
+
+- AgentWork request when psr exist
+
+```bash
+curl -v -H $'Authorization: Bearer <AccessToken>' -H "content-type:application/json" -H "OrgId:<OrgId>" -H "AuthorizationContext:<AuthorizationContext>"  -H "RequestId: <RequestId>" -X POST -d "{
+  \"userId\": \"<UserId>\",
+  \"workItemId\": \"<WorkItemId>\"
+  }
+}"  http://localhost:8085/api/v1/agentWork
+```
+
+**Note**: When test the example request commands above, replace the request url "http://localhost:8085/api/v1/agentWork" with an url with the pattern of "https://\<your org my domain name\>.my.salesforce-scrt.com/api/v1/agentWork".
 
 ## outbound-custom-event-payload.yaml
 The [outbound-custom-event-payload.yaml](outbound-custom-event-payload.yaml) shows the outbound message custom event schema. Following are examples of the custom event payload received in "data" listener of the custome event after subscribe the event by topic name "my__event__e" shown in payload below for outbound message.

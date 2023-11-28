@@ -295,6 +295,89 @@ components:
       type: "string"
       description: "UUID that references a message"
       example: "57904eb6-5352-4c5e-adf6-5f100572cf5d"
+    AgentWorkRequest:
+      type: "object"
+      description: "Payload for creating AgentWork request"
+      properties:
+        userId:
+          type: "string"
+          description: "Salesforce User Id or External User Id"
+        workItemId:
+          type: "string"
+          description: "Salesforce WorkItem Id"
+          minLength: 15
+          maxLength: 15
+        capacityPercentage:
+          type: double
+          description: "Capacity Percentage of the WorkItem"
+        capacityWeight:
+          type: double
+          description: "Capacity Weight of the WorkItem"
+        routingContext:
+          $ref: "#/components/schemas/RoutingContext"
+      required:
+        - userId
+        - workItemId
+    AgentWorkResponse:
+      type: "object"
+      properties:
+        id:
+          description: "UUID that references this response"
+          type: "string"
+        agentWorkId:
+          description: "Agent Work Id"
+          type: "string"
+        agentWorkDetails:
+          description: "Details of the AgentWork"
+          $ref: "#/components/schemas/AgentWorkDetails"
+        success:
+          type: "boolean"
+    RoutingContext:
+      type: "object"
+      description: "Context about the routing details"
+      properties:
+        conversationIdentifier:
+          type: "string"
+          description: "The conversation identifier associated with the work"
+        routingType:
+          type: string
+          $ref: "#/components/schemas/RoutingType"
+        routingCorrelationId:
+          type: "string"
+          description: "The UUID of the routing event"
+      required:
+        - conversationIdentifier
+        - routingType
+        - routingCorrelationId
+    AgentWorkDetails:
+      type: "object"
+      description: "Details about Agent Work"
+      properties:
+        existPsr:
+          type: "boolean"
+          description: "If there is an existed Pending Service Routing"
+        psrId:
+          type: "string"
+          description: "Id of Pending Service Routing"
+        capacityPercentage:
+          type: "number"
+          format: "double"
+          description: "Percentage of the capacity"
+        capacityWeight:
+          type: "number"
+          format: "double"
+          description: "Weight of the capacity"
+        routingContext:
+          $ref: "#/components/schemas/RoutingContext"
+      required:
+        - existPsr
+        - routingContext
+    RoutingType:
+      description: "Routing type - sent in routing related events as well as in the RoutingContext"
+      type: "string"
+      enum:
+        - "Initial"
+        - "Transfer"
 servers:
 - url: "/api/v1/"
 openapi: "3.0.0"
@@ -343,7 +426,59 @@ paths:
         description: "Specify the extra info for request authorization"
         in: "header"
         required: true
-        example: "<TBA>"
+        example: "<ConversationChannelDefinition developer name>"
+  /agentWork:
+    post:
+      summary: "Create agent work"
+      operationId: "post-agent-work"
+      responses:
+        default:
+          description: "Unsuccessful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '202':
+          description: "Accepted"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentWorkResponse"
+      description: "Create an agent work."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AgentWorkRequest"
+      parameters:
+        - name: "Authorization"
+          schema:
+            type: "string"
+          description: "The access token generated to make requests to the Interaction Service APIs"
+          in: "header"
+          required: true
+          example: "Bearer XXXXXX"
+        - name: "OrgId"
+          schema:
+            type: "string"
+          description: "Organization Id used to verify the request against the auth token"
+          in: "header"
+          required: true
+          example: "00Dxxxxxxxxxxxx"
+        - name: "AuthorizationContext"
+          schema:
+            type: "string"
+          description: "Specify the extra info for request authorization"
+          in: "header"
+          required: true
+          example: "<ConversationChannelDefinition developer name>"
+        - name: RequestId
+          in: header
+          description: "UUID that references this request"
+          required: true
+          schema:
+            type: "string"
+          example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
 info:
   title: "Interaction"
   version: "0.0.1"
