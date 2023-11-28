@@ -426,7 +426,7 @@ paths:
         description: "Specify the extra info for request authorization"
         in: "header"
         required: true
-        example: "<TBA>"
+        example: "<ConversationChannelDefinition developer name>"
   /agentWork:
     post:
       summary: "Create agent work"
@@ -471,7 +471,7 @@ paths:
           description: "Specify the extra info for request authorization"
           in: "header"
           required: true
-          example: "<TBA>"
+          example: "<ConversationChannelDefinition developer name>"
         - name: RequestId
           in: header
           description: "UUID that references this request"
