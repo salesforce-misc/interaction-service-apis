@@ -5,7 +5,71 @@ The interaction service APIs covers both inbound message interaction request sch
 ## inbound-interaction-api.yaml
 The [inbound-interaction-api.yaml](inbound-interaction-api.yaml) shows the inbound message interaction request schema. 
 
-Follow instructions in [Connected App](https://git.soma.salesforce.com/service-cloud-realtime/scrt2-interaction-service/blob/master/CONNECTED_APP.md) to setup connected app and generate access token which will be used in example curl commands below.
+### Salesforce Core Setup
+
+Follow the instructions below to setup connected app and generate access token which will be used as \<AccessToken\> in example curl commands shown in next section.
+
+#### Setup
+
+When setting up a Connected App there are a few things that need to be specified for the integration to work:
+
+- `Enable OAuth Settings`
+- Callback URL can be anything, recommend just using `https://salesforce.com` for now
+- `Use digital signature` (see below for generating cert)
+- Select these OAuth scopes:
+  - `Access Interaction API resources (interaction_api)`
+  - `Perform Requests at any time (refresh_token, offline_access)`
+- Enable `Opt in to issue JSON Web Token (JWT)-based access tokens for named users`
+- Save the app
+- From your Connected App, click `Manage` -> `Edit Policy`
+  - `Permitted Users` -> `Admin approved users are pre-authorized`
+- `Manage Profiles` -> `System Administrators`
+
+##### Generate Connected App Cert
+
+To generate a self-signed cert locally:
+
+```bash
+openssl genrsa -des3 -passout pass:password -out server.pass.key 2048;
+openssl rsa -passin pass:password -in server.pass.key -out server.key;
+openssl req -new -key server.key -out server.csr;
+openssl x509 -req -sha256 -days 365 -in server.csr -signkey server.key -out server.crt;
+```
+
+`server.crt` is your public-certificate and `server.key` is your private key.
+
+##### Generate AccessToken
+
+The Integration Service requires an AccessToken generated using
+the [Oauth 2.0 JWT Bearer Flow](https://help.salesforce.com/s/articleView?id=sf.remoteaccess_oauth_jwt_flow.htm&type=5)
+
+To generate a signed JWT you can use a tool such as [JWT.io](https://jwt.io/)
+
+- In the header set the `alg` to `RS256` (required by SFDC)
+- In the payload set:
+  - `iss` - your Connected Apps Consumer Key
+    - This can be found from the Connected Apps page by clicking the Manager Consumer Details button
+  - `sub` - the username of the salesforce user account.
+  - `aud` - Set depending on the env
+    - local: `https://<machineName>.internal.salesforce.com:6101`
+    - test:  `https://login.stmfa.stm.salesforce.com` or `https://login.stmfb.stm.salesforce.com`
+    - prod: `https://login.salesforce.com`
+  - `exp` - timestamp in MS when the token expires. For local dev and testing set this way in the future to avoid having to regenerate a token
+- In the signature past in your public and private key of the cert associated with the Connected App
+
+Use the created JWT to generate an AccessToken
+
+Assuming localhost:
+
+```bash
+curl --location --request POST -v https://localhost:6101/services/oauth2/token --header 'Content-Type: application/x-www-form-urlencoded' --data-urlencode "grant_type=urn:ietf:params:oauth:grant-type:jwt-bearer" --data-urlencode "assertion=<JWT>>"
+```
+
+From the response copy the `access_token` which can be used to make requests to the Interaction Service. The token should be in the format:
+
+```bash
+<orgId>!<token>
+```
 
 ### Interaction API
 
