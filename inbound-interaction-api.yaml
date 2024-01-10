@@ -65,6 +65,14 @@ components:
           type: "boolean"
         id:
           type: "string"
+        conversationIdentifier:
+          description: "The conversation identifier associated with the work"
+          type: string
+        workItemIds:
+          type: array
+          items:
+            type: string
+          description: "List of WorkItem Ids"
     MessageDeliveryFailed:
       description: "A message could not be delivered"
       allOf:
