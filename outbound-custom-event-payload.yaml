@@ -1,0 +1,382 @@
+components:
+  schemas:
+    AbstractEntry:
+      description: "Base definition for all entry types"
+      type: "object"
+      properties:
+        entryType:
+          $ref: "#/components/schemas/EntryType"
+        id:
+          $ref: "#/components/schemas/EntryId"
+      required:
+      - "id"
+      - "entryType"
+      discriminator:
+        propertyName: "entryType"
+    Message:
+      description: "A message entry"
+      allOf:
+      - $ref: "#/components/schemas/AbstractEntry"
+      - type: "object"
+        properties:
+          abstractMessage:
+            $ref: "#/components/schemas/AbstractMessage"
+        required:
+        - "abstractMessage"
+      - type: "object"
+        properties:
+          messageReason:
+            $ref: "#/components/schemas/MessageReason"
+    TypingStoppedIndicator:
+      description: "A typing stopped indicator entry"
+      allOf:
+      - $ref: "#/components/schemas/AbstractEntry"
+      - type: "object"
+        properties:
+          timestamp:
+            type: "integer"
+            format: "int64"
+        required:
+        - "timestamp"
+    StaticContentMessage:
+      description: "Non interactive MT or MO message with static content"
+      allOf:
+      - $ref: "#/components/schemas/AbstractMessage"
+      - type: "object"
+        properties:
+          staticContent:
+            $ref: "#/components/schemas/AbstractStaticContent"
+        required:
+        - "staticContent"
+    Attachment:
+      description: "A file sent as an attachment with a message."
+      additionalProperties: false
+      type: "object"
+      properties:
+        name:
+          type: "string"
+        attachmentUploadResult:
+          description: "Results of attachment uploads for MO messages."
+          $ref: "#/components/schemas/AbstractAttachmentUploadResult"
+        id:
+          $ref: "#/components/schemas/UniqueId"
+        mimeType:
+          $ref: "#/components/schemas/MimeType"
+        url:
+          $ref: "#/components/schemas/Url"
+        referenceId:
+          $ref: "#/components/schemas/UniqueId"
+      required:
+      - "id"
+      - "name"
+      - "mimeType"
+      - "url"
+    ParticipantChangedOperation:
+      type: "string"
+      description: "set of participant changed operation"
+      enum:
+      - "add"
+      - "remove"
+      - "update"
+    MessageDeliveryFailed:
+      description: "A message could not be delivered"
+      allOf:
+      - $ref: "#/components/schemas/AbstractEntry"
+      - type: "object"
+        properties:
+          recipient:
+            $ref: "#/components/schemas/Participant"
+          errorMessage:
+            type: "string"
+          failedConversationEntryIdentifier:
+            type: "string"
+          errorCode:
+            type: "string"
+        required:
+        - "recipient"
+        - "errorCode"
+    ParticipantChanged:
+      description: "A participant changed entry"
+      allOf:
+      - $ref: "#/components/schemas/AbstractEntry"
+      - type: "object"
+        properties:
+          entries:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                operation:
+                  $ref: "#/components/schemas/ParticipantChangedOperation"
+                menuMetadata:
+                  $ref: "#/components/schemas/ParticipantChangedClientMenuMetadata"
+                participant:
+                  $ref: "#/components/schemas/Participant"
+                displayName:
+                  type: "string"
+        required:
+        - "participant"
+    MessageReason:
+      type: "string"
+      description: "Enum listing unique and specific reason a message was sent."
+      enum:
+      - "AutomatedResponse"
+      - "Consent"
+    Url:
+      type: "string"
+      description: "A url"
+    MimeType:
+      type: "string"
+      description: "A mime type"
+    AttachmentUploadErrorType:
+      type: "string"
+      enum:
+      - "StorageLimitExceeded"
+      - "AttachmentTooLarge"
+      - "AttachmentNotFound"
+      - "AttachmentUploadNotEnabled"
+      - "AttachmentUploadNotAllowed"
+      - "InternalServerError"
+    ParticipantChangedClientMenuMetadata:
+      type: "object"
+      description: "A dialog that client displays in the menu"
+      properties:
+        menuOptions:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+              optionIdentifier:
+                type: "string"
+          required:
+          - "optionIdentifier"
+          - "title"
+    EntryId:
+      type: "string"
+      description: "UUID that references this entry"
+      example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
+    MessageType:
+      description: "The semantic type of a message. What a message does."
+      type: "string"
+      enum:
+      - "StaticContentMessage"
+      example: "StaticContentMessage"
+    ParticipantRole:
+      type: "string"
+      enum:
+      - "EndUser"
+      - "System"
+      - "Agent"
+      - "Chatbot"
+      - "Router"
+    AttachmentUploadResultType:
+      type: "string"
+      enum:
+      - "CompletedAttachmentUploadResult"
+      - "PendingAttachmentUploadResult"
+      - "ErrorAttachmentUploadResult"
+    UniqueId:
+      type: "string"
+      description: "A UUID that identifies objects or items uniquely per message instance"
+      example: "cbd4e3fe-f210-43b8-a4b7-dd77e39ee5e1"
+    AbstractMessage:
+      description: "Base definition for all message types"
+      type: "object"
+      properties:
+        messageType:
+          $ref: "#/components/schemas/MessageType"
+        id:
+          $ref: "#/components/schemas/MessageId"
+      required:
+      - "id"
+      - "messageType"
+      discriminator:
+        propertyName: "messageType"
+        mapping:
+          StaticContentMessage: "#/components/schemas/StaticContentMessage"
+    CompletedAttachmentUploadResult:
+      description: "Attachment upload that was completed successfully"
+      allOf:
+      - $ref: "#/components/schemas/AbstractAttachmentUploadResult"
+    Text:
+      type: "string"
+      description: "Text content"
+    AbstractAttachmentUploadResult:
+      description: "The result of an attachment upload."
+      type: "object"
+      properties:
+        resultType:
+          $ref: "#/components/schemas/AttachmentUploadResultType"
+      required:
+      - "resultType"
+      discriminator:
+        propertyName: "resultType"
+        mapping:
+          CompletedAttachmentUploadResult: "#/components/schemas/CompletedAttachmentUploadResult"
+          ErrorAttachmentUploadResult: "#/components/schemas/ErrorAttachmentUploadResult"
+          PendingAttachmentUploadResult: "#/components/schemas/PendingAttachmentUploadResult"
+    TypingStartedIndicator:
+      description: "A typing started indicator entry"
+      allOf:
+      - $ref: "#/components/schemas/AbstractEntry"
+      - type: "object"
+        properties:
+          timestamp:
+            type: "integer"
+            format: "int64"
+        required:
+        - "timestamp"
+    FormatType:
+      description: "The rendering format of a message. How it looks."
+      type: "string"
+      enum:
+      - "Text"
+      - "Attachments"
+      example: "Attachments"
+    StaticContentText:
+      description: "Static text content"
+      allOf:
+      - $ref: "#/components/schemas/AbstractStaticContent"
+      - type: "object"
+        properties:
+          text:
+            $ref: "#/components/schemas/Text"
+        required:
+        - "text"
+    ErrorAttachmentUploadResult:
+      description: "Attachment upload that failed"
+      allOf:
+      - $ref: "#/components/schemas/AbstractAttachmentUploadResult"
+      - type: "object"
+        properties:
+          errorMessage:
+            type: "string"
+            description: "A non localized message. Do not use for display in UI."
+          errorType:
+            description: "The type of error. To be used for displaying a localized error message in UI"
+            $ref: "#/components/schemas/AttachmentUploadErrorType"
+        required:
+        - "errorType"
+    PendingAttachmentUploadResult:
+      description: "Attachment upload that is pending and will be handled async"
+      allOf:
+      - $ref: "#/components/schemas/AbstractAttachmentUploadResult"
+      - type: "object"
+        properties:
+          referenceId:
+            $ref: "#/components/schemas/UniqueId"
+        required:
+        - "referenceId"
+    EntryType:
+      type: "string"
+      description: "Enum listing unique identifiers types of entries."
+      enum:
+      - "Message"
+      - "MessageDeliveryFailed"
+      - "TypingStartedIndicator"
+      - "TypingStoppedIndicator"
+      - "ParticipantChanged"
+      - "MessageUpdated"
+    Participant:
+      description: "A Participant"
+      type: "object"
+      properties:
+        appType:
+          type: "string"
+        subject:
+          type: "string"
+          description: "Subject identifier for this participant"
+          example: "005x00000000001"
+        role:
+          type: "string"
+          description: "The role of this participant"
+      required:
+      - "appType"
+      - "subject"
+      - "role"
+    ConversationEntry:
+      type: "object"
+      properties:
+        senderDisplayName:
+          type: "string"
+        identifier:
+          type: "string"
+        entryType:
+          type: "string"
+        entryPayload:
+          $ref: "#/components/schemas/AbstractEntry"
+        sender:
+          $ref: "#/components/schemas/Participant"
+        transcriptedTimestamp:
+          type: "integer"
+          format: "int64"
+        clientTimestamp:
+          type: "integer"
+          format: "int64"
+        clientDuration:
+          type: "integer"
+          format: "int64"
+      required:
+      - "entryPayload"
+      - "identifier"
+      - "sender"
+      - "clientTimestamp"
+      - "clientDuration"
+      - "transcriptedTimestamp"
+      - "entryType"
+    StaticContentAttachments:
+      description: "Attachments with optional text"
+      allOf:
+      - $ref: "#/components/schemas/AbstractStaticContent"
+      - type: "object"
+        properties:
+          text:
+            $ref: "#/components/schemas/Text"
+          attachments:
+            type: "array"
+            minItems: 1
+            items:
+              $ref: "#/components/schemas/Attachment"
+        required:
+        - "attachments"
+    MessageUpdated:
+      description: "A message entry was updated"
+      allOf:
+      - $ref: "#/components/schemas/AbstractEntry"
+      - type: "object"
+        properties:
+          updatedMessage:
+            $ref: "#/components/schemas/AbstractMessage"
+        required:
+        - "updatedMessage"
+    AbstractStaticContent:
+      type: "object"
+      properties:
+        formatType:
+          $ref: "#/components/schemas/FormatType"
+      required:
+      - "formatType"
+      discriminator:
+        propertyName: "formatType"
+        mapping:
+          Attachments: "#/components/schemas/StaticContentAttachments"
+          Text: "#/components/schemas/StaticContentText"
+    AppType:
+      type: "string"
+      description: "Enum listing unique identifiers for app services."
+      enum:
+      - "custom"
+      - "chatbot"
+      - "agent"
+      - "conversation"
+    MessageId:
+      type: "string"
+      description: "UUID that references a message"
+      example: "57904eb6-5352-4c5e-adf6-5f100572cf5d"
+asyncapi: "1.0.0"
+info:
+  title: "Conversation Events"
+  version: "1.0.0"
+  description: "Conversation Platform Events published by Conversation Service in SCRT 2.0"
