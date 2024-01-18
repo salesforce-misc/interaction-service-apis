@@ -1,0 +1,493 @@
+security:
+- BearerAuth: []
+components:
+  securitySchemes:
+    BearerAuth:
+      name: "Authorization"
+      bearerFormat: "AccessToken"
+      type: "http"
+      scheme: "bearer"
+      in: "header"
+  schemas:
+    InteractionType:
+      type: "string"
+      enum:
+      - "EntryInteraction"
+      - "AttachmentInteraction"
+    AbstractEntry:
+      description: "Base definition for all entry types"
+      type: "object"
+      properties:
+        entryType:
+          $ref: "#/components/schemas/EntryType"
+        id:
+          $ref: "#/components/schemas/EntryId"
+      required:
+      - "id"
+      - "entryType"
+      discriminator:
+        propertyName: "entryType"
+    Message:
+      description: "A message entry"
+      allOf:
+      - $ref: "#/components/schemas/AbstractEntry"
+      - type: "object"
+        properties:
+          abstractMessage:
+            $ref: "#/components/schemas/AbstractMessage"
+        required:
+        - "abstractMessage"
+    TypingStoppedIndicator:
+      description: "A typing stopped indicator entry"
+      allOf:
+      - $ref: "#/components/schemas/AbstractEntry"
+      - type: "object"
+        properties:
+          timestamp:
+            type: "integer"
+            format: "int64"
+        required:
+        - "timestamp"
+    StaticContentMessage:
+      description: "Non interactive MT or MO message with static content"
+      allOf:
+      - $ref: "#/components/schemas/AbstractMessage"
+      - type: "object"
+        properties:
+          staticContent:
+            $ref: "#/components/schemas/AbstractStaticContent"
+        required:
+        - "staticContent"
+    PostInteractionResponse:
+      type: "object"
+      properties:
+        success:
+          type: "boolean"
+        id:
+          type: "string"
+        conversationIdentifier:
+          description: "The conversation identifier associated with the work"
+          type: string
+        workItemIds:
+          type: array
+          items:
+            type: string
+          description: "List of WorkItem Ids"
+    MessageDeliveryFailed:
+      description: "A message could not be delivered"
+      allOf:
+      - $ref: "#/components/schemas/AbstractEntry"
+      - type: "object"
+        properties:
+          recipient:
+            $ref: "#/components/schemas/Participant"
+          errorMessage:
+            type: "string"
+          failedConversationEntryIdentifier:
+            type: "string"
+          errorCode:
+            type: "string"
+        required:
+        - "recipient"
+        - "errorCode"
+    EntryId:
+      type: "string"
+      description: "UUID that references this entry"
+      example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
+    EntryInteraction:
+      title: "Interaction Details"
+      allOf:
+      - $ref: "#/components/schemas/AbstractInteraction"
+      - type: "object"
+        properties:
+          payload:
+            $ref: "#/components/schemas/AbstractEntry"
+      required:
+      - "payload"
+    MessageType:
+      description: "The semantic type of a message. What a message does."
+      type: "string"
+      enum:
+      - "StaticContentMessage"
+      example: "StaticContentMessage"
+    ParticipantRole:
+      type: "string"
+      enum:
+      - "EndUser"
+    AbstractMessage:
+      description: "Base definition for all message types"
+      type: "object"
+      properties:
+        messageType:
+          $ref: "#/components/schemas/MessageType"
+        id:
+          $ref: "#/components/schemas/MessageId"
+      required:
+      - "id"
+      - "messageType"
+      discriminator:
+        propertyName: "messageType"
+        mapping:
+          StaticContentMessage: "#/components/schemas/StaticContentMessage"
+    RequestId:
+      description: "UUID that references this request"
+      type: "string"
+      maxLength: 36
+      example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
+    InteractionRequestJson:
+      description: "JSON part of the interaction request body."
+      type: "object"
+      properties:
+        from:
+          description: "End user client identifier"
+          type: "string"
+          maxLength: 255
+          example: ""
+        id:
+          $ref: "#/components/schemas/RequestId"
+        to:
+          description: "Destination Salesforce Channel Address Identifier"
+          type: "string"
+          maxLength: 240
+          example: "72a6a4ec-acbc-44f6-b2b9-e444248ca843"
+        interactions:
+          minItems: 1
+          maxItems: 1
+          description: "List of interactions to add to the conversation between \"to\" and \"from\" of the request."
+          type: "array"
+          items:
+            $ref: "#/components/schemas/AbstractInteraction"
+      required:
+      - "id"
+      - "from"
+      - "to"
+      - "interactions"
+    AttachmentInteraction:
+      title: "Attachments Details"
+      allOf:
+      - $ref: "#/components/schemas/AbstractInteraction"
+      - type: "object"
+        properties:
+          contentLength:
+            type: "integer"
+            description: "Indicates the size of the file data in bytes"
+          id:
+            type: "string"
+            example: "57904eb6-5352-4c5e-adf6-5f100572cf54"
+          text:
+            type: "string"
+            nullable: true
+            description: "Text message to send with the file."
+          attachmentIndex:
+            type: "integer"
+      required:
+      - "id"
+      - "attachmentIndex"
+      - "contentLength"
+    Error:
+      type: "object"
+      properties:
+        message:
+          type: "string"
+        code:
+          type: "int"
+      required:
+      - "code"
+      - "message"
+    Text:
+      type: "string"
+      description: "Text content"
+    InteractionRequest:
+      type: "object"
+      properties:
+        json:
+          $ref: "#/components/schemas/InteractionRequestJson"
+        attachments:
+          minItems: 0
+          maxItems: 1
+          type: "array"
+          nullable: true
+          items:
+            type: "string"
+            format: "binary"
+      required:
+      - "json"
+    TypingStartedIndicator:
+      description: "A typing started indicator entry"
+      allOf:
+      - $ref: "#/components/schemas/AbstractEntry"
+      - type: "object"
+        properties:
+          timestamp:
+            type: "integer"
+            format: "int64"
+        required:
+        - "timestamp"
+    FormatType:
+      description: "The rendering format of a message. How it looks."
+      type: "string"
+      enum:
+      - "Text"
+      example: "Attachments"
+    StaticContentText:
+      description: "Static text content"
+      allOf:
+      - $ref: "#/components/schemas/AbstractStaticContent"
+      - type: "object"
+        properties:
+          text:
+            $ref: "#/components/schemas/Text"
+        required:
+        - "text"
+    AbstractInteraction:
+      description: "A single interaction."
+      type: "object"
+      properties:
+        interactionType:
+          $ref: "#/components/schemas/InteractionType"
+        timestamp:
+          format: "int64"
+          description: "Interaction timestamp using Millisecond format"
+          type: "integer"
+          example: 1688190840000
+      required:
+      - "timestamp"
+      - "interactionType"
+      discriminator:
+        propertyName: "interactionType"
+        mapping:
+          EntryInteraction: "#/components/schemas/EntryInteraction"
+          AttachmentInteraction: "#/components/schemas/AttachmentInteraction"
+    EntryType:
+      type: "string"
+      description: "Enum listing unique identfiers types of entries."
+      enum:
+      - "Message"
+      - "MessageDeliveryFailed"
+      - "TypingStartedIndicator"
+      - "TypingStoppedIndicator"
+    Participant:
+      description: "A Participant"
+      type: "object"
+      properties:
+        appType:
+          type: "string"
+        subject:
+          type: "string"
+          description: "Subject identifier for this participant"
+          example: "005x00000000001"
+        role:
+          type: "string"
+          description: "The role of this participant"
+      required:
+      - "appType"
+      - "subject"
+      - "role"
+    AbstractStaticContent:
+      type: "object"
+      properties:
+        formatType:
+          $ref: "#/components/schemas/FormatType"
+      required:
+      - "formatType"
+      discriminator:
+        propertyName: "formatType"
+        mapping:
+          Text: "#/components/schemas/StaticContentText"
+    AppType:
+      type: "string"
+      description: "Enum listing unique identifiers for app services."
+      enum:
+      - "custom"
+    MessageId:
+      type: "string"
+      description: "UUID that references a message"
+      example: "57904eb6-5352-4c5e-adf6-5f100572cf5d"
+    AgentWorkRequest:
+      type: "object"
+      description: "Payload for creating AgentWork request"
+      properties:
+        userId:
+          type: "string"
+          description: "Salesforce User Id or External User Id"
+        workItemId:
+          type: "string"
+          description: "Salesforce WorkItem Id"
+          minLength: 15
+          maxLength: 15
+        capacityPercentage:
+          type: double
+          description: "Capacity Percentage of the WorkItem"
+        capacityWeight:
+          type: double
+          description: "Capacity Weight of the WorkItem"
+        routingContext:
+          $ref: "#/components/schemas/RoutingContext"
+      required:
+        - userId
+        - workItemId
+    AgentWorkResponse:
+      type: "object"
+      properties:
+        id:
+          description: "UUID that references this response"
+          type: "string"
+        agentWorkId:
+          description: "Agent Work Id"
+          type: "string"
+        agentWorkDetails:
+          description: "Details of the AgentWork"
+          $ref: "#/components/schemas/AgentWorkDetails"
+        success:
+          type: "boolean"
+    RoutingContext:
+      type: "object"
+      description: "Context about the routing details"
+      properties:
+        conversationIdentifier:
+          type: "string"
+          description: "The conversation identifier associated with the work"
+        routingType:
+          type: string
+          $ref: "#/components/schemas/RoutingType"
+        routingCorrelationId:
+          type: "string"
+          description: "The UUID of the routing event"
+      required:
+        - conversationIdentifier
+        - routingType
+        - routingCorrelationId
+    AgentWorkDetails:
+      type: "object"
+      description: "Details about Agent Work"
+      properties:
+        existPsr:
+          type: "boolean"
+          description: "If there is an existed Pending Service Routing"
+        psrId:
+          type: "string"
+          description: "Id of Pending Service Routing"
+        capacityPercentage:
+          type: "number"
+          format: "double"
+          description: "Percentage of the capacity"
+        capacityWeight:
+          type: "number"
+          format: "double"
+          description: "Weight of the capacity"
+        routingContext:
+          $ref: "#/components/schemas/RoutingContext"
+      required:
+        - existPsr
+        - routingContext
+    RoutingType:
+      description: "Routing type - sent in routing related events as well as in the RoutingContext"
+      type: "string"
+      enum:
+        - "Initial"
+        - "Transfer"
+servers:
+- url: "/api/v1/"
+openapi: "3.0.0"
+paths:
+  /interactions:
+    post:
+      summary: "Create interactions"
+      operationId: "post-interaction"
+      responses:
+        202:
+          description: "Accepted"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostInteractionResponse"
+        default:
+          description: "Unsuccessful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      description: "Create a interactions associated to a Conversation."
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "#/components/schemas/InteractionRequest"
+      parameters:
+      - name: "Authorization"
+        schema:
+          type: "string"
+        description: "The access token generated to make requests to the Interaction Service APIs"
+        in: "header"
+        required: true
+        example: "Bearer XXXXXX"
+      - name: "OrgId"
+        schema:
+          type: "string"
+        description: "Organization Id used to verify the request against the auth token"
+        in: "header"
+        required: true
+        example: "00Dxxxxxxxxxxxx"
+      - name: "AuthorizationContext"
+        schema:
+          type: "string"
+        description: "Specify the extra info for request authorization"
+        in: "header"
+        required: true
+        example: "<ConversationChannelDefinition developer name>"
+  /agentWork:
+    post:
+      summary: "Create agent work"
+      operationId: "post-agent-work"
+      responses:
+        default:
+          description: "Unsuccessful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        '202':
+          description: "Accepted"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentWorkResponse"
+      description: "Create an agent work."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AgentWorkRequest"
+      parameters:
+        - name: "Authorization"
+          schema:
+            type: "string"
+          description: "The access token generated to make requests to the Interaction Service APIs"
+          in: "header"
+          required: true
+          example: "Bearer XXXXXX"
+        - name: "OrgId"
+          schema:
+            type: "string"
+          description: "Organization Id used to verify the request against the auth token"
+          in: "header"
+          required: true
+          example: "00Dxxxxxxxxxxxx"
+        - name: "AuthorizationContext"
+          schema:
+            type: "string"
+          description: "Specify the extra info for request authorization"
+          in: "header"
+          required: true
+          example: "<ConversationChannelDefinition developer name>"
+        - name: RequestId
+          in: header
+          description: "UUID that references this request"
+          required: true
+          schema:
+            type: "string"
+          example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
+info:
+  title: "Interaction"
+  version: "0.0.1"
+  description: "API for managing mobile-originated (inbound) interactions associated to a conversation."
