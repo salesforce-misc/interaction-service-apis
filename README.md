@@ -152,15 +152,16 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "Author
       \"entryType\": \"MessageDeliveryFailed\",
       \"failedConversationEntryIdentifier\": \"<FailedConversationEntryIdentifier>\",
       \"recipient\": {
-         \"appType\": \"11\",
+         \"appType\": \"custom\",
          \"subject\": \"<EndUserClientIdentifier>\",
-         \"role\": \"4\"
+         \"role\": \"EndUser\"
       },
       \"errorCode\": \"<ErrorCode>\"
     }
   }]
 };type=application/json" http://localhost:8085/api/v1/interactions
 ```
+Note: Effective Spring ‘24, payloads with `"entryType": "MessageDeliveryFailed"` must set `"appType": "custom"`, and `"role": "EndUser"`. If `appType` and `role` are set to any other values, the request fails.
 
 - Interaction request with file attachment
 
