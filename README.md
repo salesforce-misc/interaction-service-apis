@@ -273,8 +273,8 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H 'AuthorizationContext: <Aut
             \"flowId\": \"<FlowDefinitionViewId>\",
             \"queueId\": \"<QueueId>\"
         },
-    \"routingAttributes\": {
-        \"<channelVariable>\" : \"<value>\"
+        \"routingAttributes\": {
+            \"<channelVariable>\" : \"<value>\"
         }
     }
 }" <local/staging test url>/api/v1/route
@@ -289,6 +289,15 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H 'AuthorizationContext: <Aut
     \"routingInfo\": {
       \"queueId\": \"<QueueId>\"
     }
+}" <local/staging test url>/api/v1/route
+```
+
+- Interaction request to route Conversation based on configuration in Messaging Channel
+
+```bash
+curl -v -H $'Authorization: Bearer <AccessToken>' -H 'AuthorizationContext: <AuthorizationContext>' -H 'RequestId: <RequestId>' -H 'OrgId: <OrgId>' -H 'Content-Type: application/json' -X POST -d "{
+    \"conversationIdentifier\": \"<conversationIdentifier>\",
+    \"routingType\": \"<routingType>\"
 }" <local/staging test url>/api/v1/route
 ```
 

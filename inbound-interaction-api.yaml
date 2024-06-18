@@ -280,7 +280,7 @@ components:
       - "Initial"
       - "Transfer"
     DeleteRouteRequest:
-      description: "Payload for deleting route (psr)"
+      description: "Payload for deleting routing request (psr)"
       type: "object"
       properties:
         conversationIdentifier:
@@ -374,7 +374,7 @@ components:
       properties:
         channelAddressIdentifier:
           type: "string"
-          description: "Unique channel definition Identifier of the conversation channel"
+          description: "Unique channel Identifier of the messaging channel"
           maxLength: 240
         endUserClientId:
           type: "string"
