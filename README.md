@@ -240,6 +240,75 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H "content-type:application/j
 
 **Note**: When test the example request commands above, replace the request url "http://localhost:8085/api/v1/agentWork" with an url with the pattern of "https://\<your org my domain name\>.my.salesforce-scrt.com/api/v1/agentWork".
 
+### Consent Status API
+
+Example request to update the consent status of a Messaging End User, be sure to replace placeholder values `<..>`
+
+- Interaction request to update Consent Status
+
+```bash
+curl -v -H $'Authorization: Bearer <AccessToken>' -H "content-type:application/json" -H "OrgId:<OrgId>" -H "AuthorizationContext:<AuthorizationContext>"  -H "RequestId: <RequestId>" -X PATCH -d "{
+  \"endUserClientId\" : \"<endUserClientId>\",
+  \"channelAddressIdentifier\" : \"<channelAddressIdentifier>\",
+  \"consentStatus\" : \"<ConsentStatusEnum>\"
+  }
+}" <local/staging test url>/api/v1/consent
+```
+
+The initial app is also configured with the management service available on port 7080. To access this, you will need to use a token created with
+the `generate_admin_key.sh` script.
+
+### Route API
+
+Example request to route the workItem be sure to replace placeholder values `<..>`
+
+- Interaction request to route Conversation based on Flow ID and fallback Queue ID and optional routing attributes.
+
+```bash
+curl -v -H $'Authorization: Bearer <AccessToken>' -H 'AuthorizationContext: <AuthorizationContext>' -H 'RequestId: <RequestId>' -H 'OrgId: <OrgId>' -H 'Content-Type: application/json' -X POST -d "{
+    \"conversationIdentifier\": \"<conversationIdentifier>\",
+    \"routingType\": \"<routingType>\",
+    \"routingInfo\": {
+        \"flow\":{
+            \"flowId\": \"<FlowDefinitionViewId>\",
+            \"queueId\": \"<QueueId>\"
+        },
+        \"routingAttributes\": {
+            \"<channelVariable>\" : \"<value>\"
+        }
+    }
+}" <local/staging test url>/api/v1/route
+```
+
+- Interaction request to route Conversation based on Queue ID
+
+```bash
+curl -v -H $'Authorization: Bearer <AccessToken>' -H 'AuthorizationContext: <AuthorizationContext>' -H 'RequestId: <RequestId>' -H 'OrgId: <OrgId>' -H 'Content-Type: application/json' -X POST -d "{
+    \"conversationIdentifier\": \"<conversationIdentifier>\",
+    \"routingType\": \"<routingType>\",
+    \"routingInfo\": {
+      \"queueId\": \"<QueueId>\"
+    }
+}" <local/staging test url>/api/v1/route
+```
+
+- Interaction request to route Conversation based on configuration in Messaging Channel
+
+```bash
+curl -v -H $'Authorization: Bearer <AccessToken>' -H 'AuthorizationContext: <AuthorizationContext>' -H 'RequestId: <RequestId>' -H 'OrgId: <OrgId>' -H 'Content-Type: application/json' -X POST -d "{
+    \"conversationIdentifier\": \"<conversationIdentifier>\",
+    \"routingType\": \"<routingType>\"
+}" <local/staging test url>/api/v1/route
+```
+
+- Interaction request to Delete PSRs for a given Conversation ID
+
+```bash
+curl -v -H $'Authorization: Bearer <AccessToken>' -H 'AuthorizationContext: <AuthorizationContext>' -H 'RequestId: <RequestId>' -H 'OrgId: <OrgId>' -H 'Content-Type: application/json' -X DELETE -d "{
+    \"conversationIdentifier\": \"<conversationIdentifier>\"
+}" <local/staging test url>/api/v1/route
+```
+
 ## outbound-custom-event-payload.yaml
 The [outbound-custom-event-payload.yaml](outbound-custom-event-payload.yaml) shows the outbound message custom event schema. Following are examples of the custom event payload received in "data" listener of the custome event after subscribe the event by topic name "my__event__e" shown in payload below for outbound message.
 

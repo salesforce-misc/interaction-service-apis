@@ -14,6 +14,20 @@ components:
       enum:
       - "EntryInteraction"
       - "AttachmentInteraction"
+    AgentWorkResponse:
+      type: "object"
+      properties:
+        id:
+          type: "string"
+          description: "UUID that references this response"
+        agentWorkId:
+          type: "string"
+          description: "Agent Work Id"
+        agentWorkDetails:
+          description: "Details of the AgentWork"
+          $ref: "#/components/schemas/AgentWorkDetails"
+        success:
+          type: "boolean"
     AbstractEntry:
       description: "Base definition for all entry types"
       type: "object"
@@ -61,18 +75,48 @@ components:
     PostInteractionResponse:
       type: "object"
       properties:
-        success:
-          type: "boolean"
+        conversationIdentifier:
+          type: "string"
+          description: "The conversation identifier associated with the work"
         id:
           type: "string"
-        conversationIdentifier:
-          description: "The conversation identifier associated with the work"
-          type: string
         workItemIds:
-          type: array
+          type: "array"
           items:
-            type: string
+            type: "string"
           description: "List of WorkItem Ids"
+        success:
+          type: "boolean"
+    PostRouteResponse:
+      type: "object"
+      properties:
+        reasonForNotRouting:
+          type: "string"
+          description: "Reason for not routing this request"
+          maxLength: 240
+        routingCorrelationId:
+          type: "string"
+          description: "CorrelationId which should be associated in agent work"
+          maxLength: 240
+        success:
+          type: "boolean"
+          description: "Indicates the routing request was successful or not"
+          maxLength: 240
+        contextParamMap:
+          type: "object"
+          description: "Additional context related to routing response like userId, queueId, etc"
+          additionalProperties:
+            type: "string"
+        psrId:
+          type: "string"
+          description: "Salesforce pendingServiceRouting Id"
+          maxLength: 240
+        workItemId:
+          type: "string"
+          description: "Salesforce WorkItem Id"
+          maxLength: 240
+        errors:
+          $ref: "#/components/schemas/RoutingError"
     MessageDeliveryFailed:
       description: "A message could not be delivered"
       allOf:
@@ -90,10 +134,108 @@ components:
         required:
         - "recipient"
         - "errorCode"
+    DeleteRouteResponse:
+      type: "object"
+      properties:
+        success:
+          type: "boolean"
+          description: "Indicates the PSR for the given conversation was successfully cancelled or not."
+    FlowInfo:
+      type: "object"
+      description: "Enter Flow details which needs to be used for routing"
+      properties:
+        flowId:
+          type: "string"
+          description: "Enter flowId for the queue"
+        queueId:
+          type: "string"
+          description: "Fallback queueId"
+    RoutingContext:
+      description: "Context about the routing details"
+      type: "object"
+      properties:
+        conversationIdentifier:
+          type: "string"
+          description: "The conversation identifier associated with the work"
+        routingType:
+          type: "string"
+          $ref: "#/components/schemas/RoutingType"
+        routingCorrelationId:
+          type: "string"
+          description: "The UUID of the routing event"
+      required:
+      - "conversationIdentifier"
+      - "routingType"
+      - "routingCorrelationId"
+    ConsentEnum:
+      type: "string"
+      description: "Messaging End User's messaging consent status"
+      enum:
+      - "OptedOut"
+      - "ImplicitlyOptedIn"
+      - "ExplicitlyOptedIn"
+      - "DoublyOptedIn"
+    AgentWorkRequest:
+      description: "Payload for creating AgentWork request"
+      type: "object"
+      properties:
+        capacityPercentage:
+          type: "double"
+          description: "Capacity Percentage of the WorkItem"
+        capacityWeight:
+          type: "double"
+          description: "Capacity Weight of the WorkItem"
+        workItemId:
+          description: "Salesforce WorkItem Id"
+          type: "string"
+          maxLength: 15
+          minLength: 15
+        routingContext:
+          $ref: "#/components/schemas/RoutingContext"
+        userId:
+          type: "string"
+          description: "Salesforce User Id or External User Id"
+      required:
+      - "userId"
+      - "workItemId"
+    ConsentResponse:
+      description: "Response after updating Consent Status of the Messaging End User from core"
+      type: "object"
+      properties:
+        errorDetail:
+          $ref: "#/components/schemas/Error"
+        success:
+          type: "boolean"
+          description: "Status of the consent status update request"
+      required:
+      - "success"
     EntryId:
       type: "string"
       description: "UUID that references this entry"
       example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
+    AgentWorkDetails:
+      description: "Details about Agent Work"
+      type: "object"
+      properties:
+        existPsr:
+          type: "boolean"
+          description: "If there is an existed Pending Service Routing"
+        capacityPercentage:
+          type: "number"
+          format: "double"
+          description: "Percentage of the capacity"
+        capacityWeight:
+          type: "number"
+          format: "double"
+          description: "Weight of the capacity"
+        psrId:
+          type: "string"
+          description: "Id of Pending Service Routing"
+        routingContext:
+          $ref: "#/components/schemas/RoutingContext"
+      required:
+      - "existPsr"
+      - "routingContext"
     EntryInteraction:
       title: "Interaction Details"
       allOf:
@@ -104,6 +246,23 @@ components:
             $ref: "#/components/schemas/AbstractEntry"
       required:
       - "payload"
+    PostRouteRequest:
+      description: "Payload for getting routing instructions from salesforce"
+      type: "object"
+      properties:
+        conversationIdentifier:
+          type: "string"
+          description: "The conversation identifier associated with the work"
+        routingInfo:
+          description: "Details to provide the core routing hook. Optional"
+          $ref: "#/components/schemas/RoutingInfo"
+        routingType:
+          type: "string"
+          description: "Details to provide the core routing hook. Optional"
+          $ref: "#/components/schemas/RoutingType"
+      required:
+      - "conversationIdentifier"
+      - "routingType"
     MessageType:
       description: "The semantic type of a message. What a message does."
       type: "string"
@@ -114,6 +273,21 @@ components:
       type: "string"
       enum:
       - "EndUser"
+    RoutingType:
+      type: "string"
+      description: "Routing type - sent in routing related events as well as in the RoutingContext"
+      enum:
+      - "Initial"
+      - "Transfer"
+    DeleteRouteRequest:
+      description: "Payload for deleting routing request (psr)"
+      type: "object"
+      properties:
+        conversationIdentifier:
+          type: "string"
+          description: "The conversation identifier associated with the work"
+      required:
+      - "conversationIdentifier"
     AbstractMessage:
       description: "Base definition for all message types"
       type: "object"
@@ -129,27 +303,25 @@ components:
         propertyName: "messageType"
         mapping:
           StaticContentMessage: "#/components/schemas/StaticContentMessage"
-    RequestId:
-      description: "UUID that references this request"
-      type: "string"
-      maxLength: 36
-      example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
     InteractionRequestJson:
       description: "JSON part of the interaction request body."
       type: "object"
       properties:
         from:
-          description: "End user client identifier"
+          description: "End user client identifier."
           type: "string"
           maxLength: 255
           example: ""
-        id:
-          $ref: "#/components/schemas/RequestId"
         to:
           description: "Destination Salesforce Channel Address Identifier"
           type: "string"
           maxLength: 240
           example: "72a6a4ec-acbc-44f6-b2b9-e444248ca843"
+        routingAttributes:
+          type: "object"
+          description: "List of Key value pairs defining the channel variable name mapped to the value"
+          additionalProperties:
+            type: "string"
         interactions:
           minItems: 1
           maxItems: 1
@@ -158,7 +330,6 @@ components:
           items:
             $ref: "#/components/schemas/AbstractInteraction"
       required:
-      - "id"
       - "from"
       - "to"
       - "interactions"
@@ -197,6 +368,24 @@ components:
     Text:
       type: "string"
       description: "Text content"
+    ConsentRequest:
+      description: "Payload to update the consent status"
+      type: "object"
+      properties:
+        channelAddressIdentifier:
+          type: "string"
+          description: "Unique channel Identifier of the messaging channel"
+          maxLength: 240
+        endUserClientId:
+          type: "string"
+          description: "The Messaging Platform Key of the Messaging End User"
+          maxLength: 240
+        consentStatus:
+          $ref: "#/components/schemas/ConsentEnum"
+      required:
+      - "endUserClientId"
+      - "channelAddressIdentifier"
+      - "consentStatus"
     InteractionRequest:
       type: "object"
       properties:
@@ -223,6 +412,21 @@ components:
             format: "int64"
         required:
         - "timestamp"
+    RoutingInfo:
+      type: "object"
+      description: "Routing related info which will be given by partner"
+      properties:
+        routingAttributes:
+          type: "object"
+          description: "List of Key value pairs defining the channel variable name mapped to the value"
+          additionalProperties:
+            type: "string"
+        queueId:
+          type: "string"
+          description: "Enter queueId for the queue"
+        flow:
+          description: "Enter Flow details which needs to be used for routing"
+          $ref: "#/components/schemas/FlowInfo"
     FormatType:
       description: "The rendering format of a message. How it looks."
       type: "string"
@@ -258,9 +462,24 @@ components:
         mapping:
           EntryInteraction: "#/components/schemas/EntryInteraction"
           AttachmentInteraction: "#/components/schemas/AttachmentInteraction"
+    RoutingError:
+      type: "object"
+      description: "Routing Error"
+      properties:
+        errorMessage:
+          type: "string"
+          description: "error Message"
+        errorType:
+          type: "string"
+          description: "error Type"
+          maxLength: 240
+        apiErrorCode:
+          type: "string"
+          description: "api error code"
+          maxLength: 240
     EntryType:
       type: "string"
-      description: "Enum listing unique identfiers types of entries."
+      description: "Enum listing unique identifiers types of entries."
       enum:
       - "Message"
       - "MessageDeliveryFailed"
@@ -303,93 +522,111 @@ components:
       type: "string"
       description: "UUID that references a message"
       example: "57904eb6-5352-4c5e-adf6-5f100572cf5d"
-    AgentWorkRequest:
-      type: "object"
-      description: "Payload for creating AgentWork request"
-      properties:
-        userId:
-          type: "string"
-          description: "Salesforce User Id or External User Id"
-        workItemId:
-          type: "string"
-          description: "Salesforce WorkItem Id"
-          minLength: 15
-          maxLength: 15
-        capacityPercentage:
-          type: double
-          description: "Capacity Percentage of the WorkItem"
-        capacityWeight:
-          type: double
-          description: "Capacity Weight of the WorkItem"
-        routingContext:
-          $ref: "#/components/schemas/RoutingContext"
-      required:
-        - userId
-        - workItemId
-    AgentWorkResponse:
-      type: "object"
-      properties:
-        id:
-          description: "UUID that references this response"
-          type: "string"
-        agentWorkId:
-          description: "Agent Work Id"
-          type: "string"
-        agentWorkDetails:
-          description: "Details of the AgentWork"
-          $ref: "#/components/schemas/AgentWorkDetails"
-        success:
-          type: "boolean"
-    RoutingContext:
-      type: "object"
-      description: "Context about the routing details"
-      properties:
-        conversationIdentifier:
-          type: "string"
-          description: "The conversation identifier associated with the work"
-        routingType:
-          type: string
-          $ref: "#/components/schemas/RoutingType"
-        routingCorrelationId:
-          type: "string"
-          description: "The UUID of the routing event"
-      required:
-        - conversationIdentifier
-        - routingType
-        - routingCorrelationId
-    AgentWorkDetails:
-      type: "object"
-      description: "Details about Agent Work"
-      properties:
-        existPsr:
-          type: "boolean"
-          description: "If there is an existed Pending Service Routing"
-        psrId:
-          type: "string"
-          description: "Id of Pending Service Routing"
-        capacityPercentage:
-          type: "number"
-          format: "double"
-          description: "Percentage of the capacity"
-        capacityWeight:
-          type: "number"
-          format: "double"
-          description: "Weight of the capacity"
-        routingContext:
-          $ref: "#/components/schemas/RoutingContext"
-      required:
-        - existPsr
-        - routingContext
-    RoutingType:
-      description: "Routing type - sent in routing related events as well as in the RoutingContext"
-      type: "string"
-      enum:
-        - "Initial"
-        - "Transfer"
 servers:
 - url: "/api/v1/"
 openapi: "3.0.0"
 paths:
+  /route:
+    post:
+      summary: "Route API to get routing instructions from Salesforce"
+      operationId: "post-route"
+      responses:
+        202:
+          description: "Accepted"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostRouteResponse"
+        default:
+          description: "Unsuccessful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      description: "Create PSR for given conversation."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostRouteRequest"
+      parameters:
+      - name: "Authorization"
+        schema:
+          type: "string"
+        description: "The access token generated to make requests to the Interaction Service APIs"
+        in: "header"
+        required: true
+        example: "Bearer XXXXXX"
+      - name: "OrgId"
+        schema:
+          type: "string"
+        description: "Organization Id used to verify the request against the auth token"
+        in: "header"
+        required: true
+        example: "00Dxxxxxxxxxxxx"
+      - name: "AuthorizationContext"
+        schema:
+          type: "string"
+        description: "Specify the extra info for request authorization"
+        in: "header"
+        required: true
+      - name: "RequestId"
+        schema:
+          type: "string"
+        description: "UUID that references this request"
+        in: "header"
+        required: true
+        example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
+    delete:
+      summary: "Delete PSR for given conversation"
+      operationId: "delete-route"
+      responses:
+        202:
+          description: "Accepted"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DeleteRouteResponse"
+        default:
+          description: "Unsuccessful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      description: "Delete PSR for given conversation."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DeleteRouteRequest"
+      parameters:
+      - name: "Authorization"
+        schema:
+          type: "string"
+        description: "The access token generated to make requests to the Interaction Service APIs"
+        in: "header"
+        required: true
+        example: "Bearer XXXXXX"
+      - name: "OrgId"
+        schema:
+          type: "string"
+        description: "Organization Id used to verify the request against the auth token"
+        in: "header"
+        required: true
+        example: "00Dxxxxxxxxxxxx"
+      - name: "AuthorizationContext"
+        schema:
+          type: "string"
+        description: "Specify the extra info for request authorization"
+        in: "header"
+        required: true
+      - name: "RequestId"
+        schema:
+          type: "string"
+        description: "UUID that references this request"
+        in: "header"
+        required: true
+        example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
   /interactions:
     post:
       summary: "Create interactions"
@@ -409,6 +646,7 @@ paths:
                 $ref: "#/components/schemas/Error"
       description: "Create a interactions associated to a Conversation."
       requestBody:
+        required: true
         content:
           multipart/form-data:
             schema:
@@ -434,24 +672,31 @@ paths:
         description: "Specify the extra info for request authorization"
         in: "header"
         required: true
-        example: "<ConversationChannelDefinition developer name>"
+        example: "Partner_ChannelDefinition"
+      - name: "RequestId"
+        schema:
+          type: "string"
+        description: "UUID that references this request"
+        in: "header"
+        required: true
+        example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
   /agentWork:
     post:
       summary: "Create agent work"
       operationId: "post-agent-work"
       responses:
+        202:
+          description: "Accepted"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AgentWorkResponse"
         default:
           description: "Unsuccessful operation"
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-        '202':
-          description: "Accepted"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/AgentWorkResponse"
       description: "Create an agent work."
       requestBody:
         content:
@@ -459,35 +704,84 @@ paths:
             schema:
               $ref: "#/components/schemas/AgentWorkRequest"
       parameters:
-        - name: "Authorization"
-          schema:
-            type: "string"
-          description: "The access token generated to make requests to the Interaction Service APIs"
-          in: "header"
-          required: true
-          example: "Bearer XXXXXX"
-        - name: "OrgId"
-          schema:
-            type: "string"
-          description: "Organization Id used to verify the request against the auth token"
-          in: "header"
-          required: true
-          example: "00Dxxxxxxxxxxxx"
-        - name: "AuthorizationContext"
-          schema:
-            type: "string"
-          description: "Specify the extra info for request authorization"
-          in: "header"
-          required: true
-          example: "<ConversationChannelDefinition developer name>"
-        - name: RequestId
-          in: header
-          description: "UUID that references this request"
-          required: true
-          schema:
-            type: "string"
-          example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
+      - name: "Authorization"
+        schema:
+          type: "string"
+        description: "The access token generated to make requests to the Interaction Service APIs"
+        in: "header"
+        required: true
+        example: "Bearer XXXXXX"
+      - name: "OrgId"
+        schema:
+          type: "string"
+        description: "Organization Id used to verify the request against the auth token"
+        in: "header"
+        required: true
+        example: "00Dxxxxxxxxxxxx"
+      - name: "AuthorizationContext"
+        schema:
+          type: "string"
+        description: "Specify the extra info for request authorization"
+        in: "header"
+        required: true
+      - name: "RequestId"
+        schema:
+          type: "string"
+        description: "UUID that references this request"
+        in: "header"
+        required: true
+        example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
+  /consent:
+    patch:
+      summary: "Update consent status"
+      operationId: "patch-consent-update"
+      responses:
+        default:
+          description: "Unsuccessful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConsentResponse"
+        200:
+          description: "OK"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ConsentResponse"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ConsentRequest"
+      parameters:
+      - name: "Authorization"
+        schema:
+          type: "string"
+        description: "The access token generated to make requests to the Interaction Service APIs"
+        in: "header"
+        required: true
+        example: "Bearer XXXXXX"
+      - name: "OrgId"
+        schema:
+          type: "string"
+        description: "Organization Id used to verify the request against the auth token"
+        in: "header"
+        required: true
+        example: "00Dxxxxxxxxxxxx"
+      - name: "AuthorizationContext"
+        schema:
+          type: "string"
+        description: "Specify the extra info for request authorization"
+        in: "header"
+        required: true
+      - name: "RequestId"
+        schema:
+          type: "string"
+        description: "UUID that references this request"
+        in: "header"
+        required: true
+        example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
 info:
   title: "Interaction"
   version: "0.0.1"
-  description: "API for managing mobile-originated (inbound) interactions associated to a conversation."
+  description: "APIs for interaction service"
