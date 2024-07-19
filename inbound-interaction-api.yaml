@@ -571,6 +571,12 @@ components:
           description: Status of the consent status update request
       required:
         - success
+    AcknowledgementType:
+      description: Acknowledgement Type
+      type: string
+      enum:
+        - Read
+        - Delivered
 servers:
 - url: "/api/v1/"
 openapi: "3.0.0"
