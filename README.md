@@ -308,6 +308,97 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H 'AuthorizationContext: <Aut
     \"conversationIdentifier\": \"<conversationIdentifier>\"
 }" <local/staging test url>/api/v1/route
 ```
+#### RoutingResult API
+
+Example request to notify routing result, be sure to replace placeholder values <..>
+
+- Request to notify success routing result
+
+```bash
+curl -v -H $'Authorization: Bearer <AccessToken>' -H 'AuthorizationContext: <AuthorizationContext>' -H 'RequestId: <RequestId>' -H 'OrgId: <OrgId>' -H 'Content-Type: application/json' -X POST -d "{
+    \"workItemId\":\"<WorkItemId>\",
+    \"conversationIdentifier\":\"<ConversationId>\",
+    \"success\":true,
+    \"externallyRouted\":true
+}" http://localhost:8085/api/v1/routingResult
+```
+
+- Request to notify failure routing result
+
+```bash
+curl -v -H $'Authorization: Bearer <AccessToken>' -H 'AuthorizationContext: <AuthorizationContext>' -H 'RequestId: <RequestId>' -H 'OrgId: <OrgId>' -H 'Content-Type: application/json' -X POST -d "{
+    \"workItemId\":\"<WorkItemId>\",
+    \"conversationIdentifier\":\"<ConversationId>\",
+    \"success\":false,
+    \"externallyRouted\":true,
+    \"errorMessage\":\"<ErrorMessage>\"
+}" http://localhost:8085/api/v1/routingResult
+```
+
+#### Capabilities API
+
+The API allows to register different capabilities to support messaging components
+Example request for registering capability, be sure to replace placeholder values `<..>`
+You need to register for the messageType and formatType which your integration supports
+
+```bash
+curl -v \
+-H "Authorization: Bearer <AccessToken>" \
+-H "content-type: application/json" \
+-H "OrgId: <OrgId>" \
+-H "AuthorizationContext: <AuthorizationContext>" \
+-H "RequestId: <RequestId>" \
+-X PATCH -d '{
+    "capabilities": {
+        "appType": "custom",
+        "channelCapabilities": [
+            {
+                "channelType": "custom",
+                "customIntegration": {
+                    "customIntegrationType": "CustomChannelIntegration",
+                    "integrationNamespace": "<orgId | developer namespace>",
+                    "conversationChannelDefinitionDevName": "<ConversationChannelDefinition developer Name>"
+                },
+                "messageTypeCapabilities": [
+                    {
+                        "messageType": "StaticContentMessage",
+                        "formatTypeCapabilities": [
+                            {
+                                "formatType": "Attachments",
+                                "capabilityFieldRestriction": [
+                                    {
+                                        "fieldJsonPath": "$.staticContent.attachments.mimeType",
+                                        "restriction": {
+                                            "fieldRestrictionType": "MimeTypeRestriction",
+                                            "mimeType": "image/png"
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    },
+                    {
+                        "messageType": "ChoicesMessage",
+                        "formatTypeCapabilities": [
+                            {
+                                "formatType": "Buttons"
+                            }
+                        ]
+                    },
+                    {
+                        "messageType": "FormMessage",
+                        "formatTypeCapabilities": [
+                            {
+                                "formatType": "Inputs"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    }
+}' http://localhost:8085/api/v1/capabilities
+```
 
 ## outbound-custom-event-payload.yaml
 The [outbound-custom-event-payload.yaml](outbound-custom-event-payload.yaml) shows the outbound message custom event schema. Following are examples of the custom event payload received in "data" listener of the custome event after subscribe the event by topic name "my__event__e" shown in payload below for outbound message.
