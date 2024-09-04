@@ -1400,6 +1400,89 @@ components:
       type: "string"
       description: "UUID that references a message"
       example: "57904eb6-5352-4c5e-adf6-5f100572cf5d"
+    SendHistoryAttachmentsRequest:
+      type: object
+      properties:
+        sendHistoryAttachmentsRequestJson:
+          $ref: '#/components/schemas/SendHistoryAttachmentsRequestJson'
+        attachments:
+          type: array
+          minItems: 1
+          maxItems: 1
+          nullable: false
+          items:
+            type: string
+            format: binary
+      required:
+        - sendHistoryAttachmentsRequestJson
+        - attachments
+    SendHistoryAttachmentsResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+      required:
+        - success
+    SendHistoryAttachmentsRequestJson:
+      type: object
+      properties:
+        channelAddressIdentifier:
+          type: string
+          description: "Messaging Channel platform key"
+        conversationParticipants:
+          type: array
+          description: "list of participants in the conversation"
+          minItems: 1
+          maxItems: 3
+          items:
+            $ref: '#/components/schemas/ConversationParticipant'
+        conversationEntries:
+          type: array
+          description: "list of messages sent in the conversation"
+          minItems: 1
+          maxItems: 1
+          items:
+            $ref: '#/components/schemas/AttachmentConversationEntry'
+      required:
+        - channelAddressIdentifier
+        - conversationParticipants
+        - conversationEntries
+    AttachmentConversationEntry:
+      type: object
+      description: "attachment conversation entry"
+      properties:
+        clientTimestamp:
+          type: integer
+          description: "time at which the message was sent in the conversation"
+          format: int64
+          example: 1688190840000
+        sender:
+          $ref: '#/components/schemas/Participant'
+        entryPayload:
+          $ref: '#/components/schemas/AttachmentMessage'
+      required:
+        - entryPayload
+        - clientTimestamp
+        - sender
+    AttachmentMessage:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 57904eb6-5352-4c5e-adf6-5f100572cf54
+        attachmentIndex:
+          type: integer
+        contentLength:
+          type: integer
+          description: "Indicates the size of the file data in bytes"
+        text:
+          type: string
+          nullable: true
+          description: "Text message to send with the file."
+      required:
+        - id
+        - attachmentIndex
+        - contentLength
 servers:
 - url: "/api/v1/"
 openapi: "3.0.0"
@@ -1920,6 +2003,63 @@ paths:
         in: "header"
         required: true
         example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
+  /attachmentHistory:
+    post:
+      summary: Send history of files as attachments to the message
+      operationId: sendAttachmentHistory
+      responses:
+        default:
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '202':
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SendHistoryAttachmentsResponse'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/SendHistoryAttachmentsRequest'
+      parameters:
+        - in: header
+          name: Authorization
+          description: "The access token generated to make requests to the Interaction Service APIs"
+          example: Bearer XXXXXX
+          required: true
+          schema:
+            type: string
+        - name: OrgId
+          in: header
+          description: "Organization Id used to verify the request against the auth token"
+          example: 00Dxxxxxxxxxxxx
+          required: true
+          schema:
+            type: string
+        - name: AuthorizationContext
+          in: header
+          description: "Specify the extra info for request authorization"
+          required: true
+          schema:
+            type: string
+        - name: AuthorizationContextType
+          in: header
+          description: "type of the context for request"
+          required: true
+          schema:
+            $ref: '#/components/schemas/AuthorizationContextType'
+        - name: RequestId
+          in: header
+          description: "UUID that references this request"
+          required: true
+          schema:
+            type: string
+          example: f7904eb6-5352-4c5e-adf6-5f100572cf5d
 info:
   title: "Interaction"
   version: "0.0.1"
