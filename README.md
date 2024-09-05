@@ -488,6 +488,102 @@ Here `"subject":"005xx0000012345"` is the salesforce id of sender.
     }
   }
 }
+```  
+
+#### ConversationHistory API
+
+The API supports validation to ensure that partners don’t import conversations older than 24 hrs.
+
+Example request for sending conversation History Request, be sure to replace placeholder values `<..>`
+
+```bash
+curl -v \
+-H "Authorization: Bearer <AccessToken>" \
+-H "content-type: application/json" \
+-H "OrgId: <OrgId>" \
+-H "AuthorizationContext: <AuthorizationContext>" \
+-H "AuthorizationContextType: <AuthorizationContextType>" \
+-H "RequestId: <RequestId>" \
+-X POST -d "{
+  \"channelAddressIdentifier\": \"<channelAddressIdentifier>\",
+  \"conversationParticipants\": [
+    {
+      \"displayName\": \"<displayName>\",
+      \"participant\": {
+            \"subject\": \"<unique identifier for the participant>\",
+            \"role\": \"<ParticipantRole>\",
+            \"appType\": \"<AppType>\"
+        },
+      \"joinedTime\": <Timestamp in Unix Epoch Milliseconds>
+    }
+  ],
+  \"conversationEntries\": [
+    {
+        \"clientTimestamp\": <Timestamp in Unix Epoch Milliseconds>,
+        \"sender\": {
+            \"subject\": \"<unique identifier for the sender>\",
+            \"role\": \"<ParticipantRole>\",
+            \"appType\": \"<AppType>\"
+        },
+        \"entryPayload\": {
+            \"entryType\": \"Message\",
+            \"id\": \"<payloadId>\",
+            \"abstractMessage\": {
+                \"messageType\": \"StaticContentMessage\",
+                \"id\": \"<messageId>\",
+                \"staticContent\": {
+                    \"formatType\": \"Text\",
+                    \"text\": \"Hi There\"
+                }
+            }
+        }
+    }
+  ]
+}" http://localhost:8085/api/v1/conversationHistory
+```
+
+#### AttachmentsHistory API
+
+Example request for sending attachment History in the Conversation Request, be sure to replace placeholder values `<..>`
+
+```bash
+curl --location 'http://localhost:8085/api/v1/attachmentHistory' \
+--header 'OrgId: <orgId>>' \
+--header 'AuthorizationContext: <AuthorizationContext>' \
+--header 'RequestId: <RequestId>' \
+--header 'AuthorizationContextType: <AuthorizationContextType>' \
+--header 'Authorization: Bearer <AccessToken>' \
+--form 'sendHistoryAttachmentsRequestJson="{
+        \"channelAddressIdentifier\": \"<channelAddressIdentifier>\",
+        \"conversationParticipants\": [
+            {
+                \"displayName\": \"<displayName>\",
+                \"participant\": {
+                    \"subject\": \"<participantSubject>\",
+                    \"role\": \"<ParticipantRole>\",
+                    \"appType\": \"<AppType>\"
+                },
+                \"joinedTime\": <Timestamp in Unix Epoch Milliseconds>
+            }
+        ],
+        \"conversationEntries\": [
+            {
+                \"clientTimestamp\": <Timestamp in Unix Epoch Milliseconds>,
+                \"sender\": {
+                    \"subject\": \"<senderSubject>\",
+                    \"role\": \"<ParticipantRole>\",
+                    \"appType\": \"<AppType>\"
+                },
+                \"entryPayload\": {
+                    \"id\": \"<messageId>\",
+                    \"attachmentIndex\": <attachmentIndex>,
+                    \"contentLength\": <contentLength>,
+                    \"text\": \"Hi There\"
+                }
+            }
+        ]
+    }";type=application/json' \
+--form "attachments=@/<path to an image>"'
 ```
 
 Note: In the payload examples above, the key "my__event__e" is the developer name for the outbound message customer event configured in salesforce setup. The keys "my__event__chnlAddrIdField__c", "my__event__payloadField__c", "my__event__recipientField__c" and "my__event__EventType__c" are corresponding custom fields "Custom Event Channel Address Id Field", "Custom Event Payload Field", "Custom Event Recipient Field", "Custom event type Field" defined in the outbound message customer event.
