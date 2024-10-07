@@ -466,6 +466,11 @@ components:
           type: "string"
           maxLength: 15
           minLength: 15
+        agentActionVisibilities:
+          type: array
+          description: "List of agent action visibilities"
+          items:
+            $ref: '#/components/schemas/AgentActionVisibilityItem'
         routingContext:
           $ref: "#/components/schemas/RoutingContext"
         userId:
@@ -748,6 +753,23 @@ components:
           $ref: "#/components/schemas/AgentWorkDetails"
         success:
           type: "boolean"
+    AgentActionVisibilityItem:
+      type: object
+      description: "Agent action visibility info"
+      properties:
+        agentAction:
+          $ref: '#/components/schemas/AgentActionEnum'
+        visible:
+          type: boolean
+          description: "Flag to indicate action visibility"
+      required:
+        - agentAction
+        - visible
+    AgentActionEnum:
+      description: Agent action enum, in 254 we only support 'Transfer'
+      type: string
+      enum:
+        - Transfer      
     StaticContentMessage:
       description: "Non interactive MT or MO message with static content"
       allOf:
