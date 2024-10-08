@@ -238,38 +238,6 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H "content-type:application/j
 }"  http://localhost:8085/api/v1/agentWork
 ```
 
-- Interaction request with agent action visibilities
-
-```bash
-curl -v -H $'Authorization: Bearer <AccessToken>' -H "content-type:application/json" -H "OrgId:<OrgId>" -H "AuthorizationContext:<AuthorizationContext>"  -H "RequestId: <RequestId>" -X POST -d "{
-  \"userId\": \"<UserId>\",
-  \"workItemId\": \"<WorkItemId>\",
-  \"capacityWeight\": <CapacityWeight>,
-  \"routingContext\": {
-    \"conversationIdentifier\": \"<ConversationId>\",
-    \"routingType\": \"<RoutingType>\",
-    \"routingCorrelationId\": \"<EventId>\"
-  },
-  \"agentActionVisibilities\": [{
-    \"agentAction\": \"Transfer\",
-    \"visible\": true
-  }]
- }"  http://localhost:8085/api/v1/agentWork
-```
-
-- Interaction request with agent action visibilities when psr exist
-
-```bash
-curl -v -H $'Authorization: Bearer <AccessToken>' -H "content-type:application/json" -H "OrgId:<OrgId>" -H "AuthorizationContext:<AuthorizationContext>"  -H "RequestId: <RequestId>" -X POST -d "{
-  \"userId\": \"<UserId>\",
-  \"workItemId\": \"<WorkItemId>\",
-  \"agentActionVisibilities\": [{
-    \"agentAction\": \"Transfer\",
-    \"visible\": true
-  }]
- }"  http://localhost:8085/api/v1/agentWork
-```
-
 **Note**: When test the example request commands above, replace the request url "http://localhost:8085/api/v1/agentWork" with an url with the pattern of "https://\<your org my domain name\>.my.salesforce-scrt.com/api/v1/agentWork".
 
 ### Consent Status API
