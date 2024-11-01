@@ -3,7 +3,7 @@
 ## Client Errors
 | Error Code | Description |
 |--|--|
-| *10001* | The Dev name of the Conversation Channel Definition in the request isn't valid for the provided value in the *"to":"\<channelAddressIdentifier\>"* field. |
+| *10001* | The "to" value is invalid. Set the value to the ConversationChannelDefinition developer name in the format *{prefix}_{ConnectedAppName}*. The prefix must match the developer name prefix of the corresponding connected app.|
 | *10002* | The channel type for the provided *"to":"\<channelAddressIdentifier\>"* field isn't valid. |
 | *10003* | The supplied Authorization access token is missing the required Connected App scope. Required value: interaction_api. |
 | *10004* | The supplied Authorization access token is not valid. |
@@ -12,25 +12,25 @@
 | *10007* | The file ID field is empty|
 | *10008* | The file size exceeds the maximum limit of 25 MB|
 | *10009* | The file is empty or doesn’t exist|
-| *10010* | The interaction contentLength field is empty|
+| *10010* | The 'contentLength' field in interaction request payload is empty.|
 | *10011* | The number of interactions of type AttachmentInteraction does not match the number of attachment files|
-| *10012* | Enter a valid workItemId for the MessagingSession ID.|
-| *10013* | Enter either a capacityPercentage or a capacityWeight, but not both.|
-| *10014* | Enter a capacity weight greater than or equal to 0.|
-| *10015* | Enter a capacity percentage between 0 and 100, inclusive.|
-| *10016* | Enter a valid header.|
+| *10012* | Specify a valid workItemId for the MessagingSession ID.|
+| *10013* | Specify either a capacityPercentage or a capacityWeight, but not both.|
+| *10014* | Specify a capacity weight greater than or equal to 0.|
+| *10015* | Specify a capacity percentage between 0 and 100, inclusive.|
+| *10016* | Specify a valid header.|
 | *10017* | The channelAddressIdentifier provided does not exist.|
 | *10018* | The conversation identifier is not valid.|
 | *10019* | The service is in read-only mode because an org migration is in progress. Try again later.|
 | *10020* | The endUserClientId provided is not valid|
-| *10021* | Enter a valid Consent Status Enum value|
+| *10021* | Specify a valid Consent Status Enum value|
 | *10022* | Cannot update Consent Status where the Consent Owner of the channel is not set to Partner|
 | *10023* | Cannot update Consent Status where the SupportsKeywords of the channel is true|
 | *10024* | For Flow based Routing, flow ID and Fallback Queue ID are required fields|
 | *10025* | The conversation id isn't found based on channelAddressIdentifier and CUSTOM channel type.|
 | *10026* | The conversaction channel defnition for the provided *"to":"\<channelAddressIdentifier\>"* field is missing.|
-| *10027* | The provided *"to"* field isn't valid.|
-| *10028* | The provided *"from"* field isn't valid.|
+| *10027* | The provided *"to":"\<channelAddressIdentifier\>"* field isn't valid.|
+| *10028* | The provided *"from:"\<endUser\>""* field isn't valid.|
 | *10029* | The provided interaction list isn't valid.|
 | *10030* | Specify either a flow or a queue to Route API|
 | *10031* | The channelAddressIdentifier provided is not active.|
