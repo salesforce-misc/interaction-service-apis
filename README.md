@@ -450,7 +450,7 @@ curl -v \
 
 The API supports validation to ensure that partners don’t import conversations older than 24 hrs.
 
-Example request for sending conversation History Request, be sure to replace placeholder values `<..>`
+Example request for sending text-based conversation History Request, be sure to replace placeholder values `<..>`
 
 ```bash
 curl -v \
@@ -498,49 +498,6 @@ curl -v \
 }" http://localhost:8085/api/v1/conversationHistory
 ```
 
-#### AttachmentsHistory API
-
-Example request for sending attachment History in the Conversation Request, be sure to replace placeholder values `<..>`
-
-```bash
-curl --location 'http://localhost:8085/api/v1/attachmentHistory' \
---header 'OrgId: <orgId>>' \
---header 'AuthorizationContext: <AuthorizationContext>' \
---header 'RequestId: <RequestId>' \
---header 'AuthorizationContextType: <AuthorizationContextType>' \
---header 'Authorization: Bearer <AccessToken>' \
---form 'sendHistoryAttachmentsRequestJson="{
-        \"channelAddressIdentifier\": \"<channelAddressIdentifier>\",
-        \"conversationParticipants\": [
-            {
-                \"displayName\": \"<displayName>\",
-                \"participant\": {
-                    \"subject\": \"<participantSubject>\",
-                    \"role\": \"<ParticipantRole>\",
-                    \"appType\": \"<AppType>\"
-                },
-                \"joinedTime\": <Timestamp in Unix Epoch Milliseconds>
-            }
-        ],
-        \"conversationEntries\": [
-            {
-                \"clientTimestamp\": <Timestamp in Unix Epoch Milliseconds>,
-                \"sender\": {
-                    \"subject\": \"<senderSubject>\",
-                    \"role\": \"<ParticipantRole>\",
-                    \"appType\": \"<AppType>\"
-                },
-                \"entryPayload\": {
-                    \"id\": \"<messageId>\",
-                    \"attachmentIndex\": <attachmentIndex>,
-                    \"contentLength\": <contentLength>,
-                    \"text\": \"Hi There\"
-                }
-            }
-        ]
-    }";type=application/json' \
---form "attachments=@/<path to an image>"'
-```
 
 ## outbound-custom-event-payload.yaml
 The [outbound-custom-event-payload.yaml](outbound-custom-event-payload.yaml) shows the outbound message custom event schema. Following are examples of the custom event payload received in "data" listener of the custome event after subscribe the event by topic name "my__event__e" shown in payload below for outbound message.
