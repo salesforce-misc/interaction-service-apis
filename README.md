@@ -425,9 +425,11 @@ curl -v \
 
 #### ConversationHistory API
 
+This API enables the import of text and attachment-based conversation history between end users and bots that took place outside of Salesforce.
+
 The API supports validation to ensure that partners don’t import conversations older than 24 hrs.
 
-Example request for sending conversation History Request, be sure to replace placeholder values `<..>`
+Example request for sending text-based conversation History Request, be sure to replace placeholder values `<..>`
 
 ```bash
 curl -v \
@@ -475,48 +477,67 @@ curl -v \
 }" http://localhost:8085/api/v1/conversationHistory
 ```
 
-#### AttachmentsHistory API
-
-Example request for sending attachment History in the Conversation Request, be sure to replace placeholder values `<..>`
+Example request for sending attachment-based conversation History Request, be sure to replace placeholder values `<..>`
 
 ```bash
-curl --location 'http://localhost:8085/api/v1/attachmentHistory' \
---header 'OrgId: <orgId>>' \
---header 'AuthorizationContext: <AuthorizationContext>' \
---header 'RequestId: <RequestId>' \
---header 'AuthorizationContextType: <AuthorizationContextType>' \
---header 'Authorization: Bearer <AccessToken>' \
---form 'sendHistoryAttachmentsRequestJson="{
-        \"channelAddressIdentifier\": \"<channelAddressIdentifier>\",
-        \"conversationParticipants\": [
-            {
-                \"displayName\": \"<displayName>\",
-                \"participant\": {
-                    \"subject\": \"<participantSubject>\",
-                    \"role\": \"<ParticipantRole>\",
-                    \"appType\": \"<AppType>\"
-                },
-                \"joinedTime\": <Timestamp in Unix Epoch Milliseconds>
-            }
-        ],
-        \"conversationEntries\": [
-            {
-                \"clientTimestamp\": <Timestamp in Unix Epoch Milliseconds>,
-                \"sender\": {
-                    \"subject\": \"<senderSubject>\",
-                    \"role\": \"<ParticipantRole>\",
-                    \"appType\": \"<AppType>\"
-                },
-                \"entryPayload\": {
-                    \"id\": \"<messageId>\",
-                    \"attachmentIndex\": <attachmentIndex>,
-                    \"contentLength\": <contentLength>,
-                    \"text\": \"Hi There\"
+curl -v \
+-H "Authorization: Bearer <AccessToken>" \
+-H "content-type: application/json" \
+-H "OrgId: <OrgId>" \
+-H "AuthorizationContext: <AuthorizationContext>" \
+-H "AuthorizationContextType: <AuthorizationContextType>" \
+-H "RequestId: <RequestId>" \
+-X POST -d "{
+  \"channelAddressIdentifier\": \"<channelAddressIdentifier>\",
+  \"conversationParticipants\": [
+    {
+      \"displayName\": \"<displayName>\",
+      \"participant\": {
+            \"subject\": \"<unique identifier for the participant>\",
+            \"role\": \"<ParticipantRole>\",
+            \"appType\": \"<AppType>\"
+        },
+      \"joinedTime\":  <Timestamp in Unix Epoch Milliseconds>
+    }
+  ],
+  \"conversationEntries\": [
+    {
+        \"clientTimestamp\":  <Timestamp in Unix Epoch Milliseconds>,
+        \"sender\": {
+            \"subject\": \"<unique identifier for the participant>\",
+            \"role\": \"<ParticipantRole>\",
+            \"appType\": \"<AppType>\"
+        },
+        \"entryPayload\": {
+            \"entryType\": \"Message\",
+            \"id\": \"<payloadId>\",
+            \"abstractMessage\": {
+                \"messageType\": \"StaticContentMessage\",
+                \"inReplyToMessageId\": <inReplyToMessageId>,
+                \"id\": \"<messageId>\",
+                 \"references\": [{
+                    \"recordId\": \"<ContentVersionId>\",
+                    \"id\": \"<referenceId>\"
+                  }],
+                \"staticContent\": {
+                    \"formatType\": \"Attachments\",
+                    \"text\": <text>,
+                    \"attachments\": [
+                      {
+                        \"name\": \"pdf-sample.pdf\",
+                        \"attachmentUploadResult\": <attachmentUploadResult>,
+                        \"id\": \"<attachmentId>\",
+                        \"mimeType\": \"<supported-mimeTypes>\",
+                        \"url\": \"<publicURl-of-uploaded-file>\",
+                        \"referenceId\": \"<referenceId>\"
+                      }
+                    ]
                 }
             }
-        ]
-    }";type=application/json' \
---form "attachments=@/<path to an image>"'
+        }
+    }
+  ]
+}" http://localhost:8085/api/v1/conversationHistory
 ```
 
 ## outbound-custom-event-payload.yaml
