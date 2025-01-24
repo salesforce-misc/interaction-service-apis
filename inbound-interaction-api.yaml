@@ -56,6 +56,15 @@ components:
           maxLength: 240
         errors:
           $ref: "#/components/schemas/RoutingError"
+    AcknowledgementResponse:
+      type: object
+      description: "Response after sending read / delivered acknowledgment"
+      properties:
+        success:
+          type: boolean
+          description: Status of the consent status update request
+      required:
+      - success
     FieldRestrictionType:
       type: "string"
       description: "The set field indicated the restriction type for this FieldRestriction."
@@ -538,6 +547,31 @@ components:
       - "sender"
       - "conversationIdentifier"
       - "acknowledgements"
+    Acknowledgement:
+      type: object
+        properties:
+          acknowledgementType:
+            $ref: '#/components/schemas/AcknowledgementType'
+          acknowledgedConversationEntryIdentifier:
+            type: string
+            description: The unique identifier for the conversation entry this acknowledgement is associated with
+          acknowledgmentCreatedConversationEntryIdentifier:
+            type: string
+            description: The client-supplied unique identifier to set when storing the new acknowledgement conversation entry
+          acknowledgementTimestamp:
+            type: string
+            description: The timestamp associated with the acknowledgement
+      required:
+      - acknowledgementType
+      - acknowledgedConversationEntryIdentifier
+      - acknowledgmentCreatedConversationEntryIdentifier
+      - acknowledgementTimestamp
+    AcknowledgementType:
+      description: Acknowledgement Type
+      type: string
+      enum:
+      - "Read"
+      - "Delivered"
     CompositeValue:
       description: "A composite value that contains a collection of named values"
       allOf:
