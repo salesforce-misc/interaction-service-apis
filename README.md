@@ -400,6 +400,29 @@ curl -v \
 }' http://localhost:8085/api/v1/capabilities
 ```
 
+#### Acknowledgement API
+
+Example request to acknowledge delivery / read of messages sent from agent. Be sure to replace placeholder values `<..>`
+
+```bash
+curl -v -H $'Authorization: Bearer <AccessToken>' -H 'AuthorizationContext: <AuthorizationContext>' -H 'RequestId: <RequestId>' -H 'OrgId: <OrgId>' -H 'Content-Type: application/json' -X POST -d "{
+    \"sender\": {
+      \"appType\" : \"<AppType>\",
+      \"subject\" : \"<endUserClientId>\",
+      \"role\" : \"<ParticipantRole>\"
+    },
+    \"conversationIdentifier\" : \"<conversation Identifier>\",
+    \"acknowledgements\" : [ {
+      \"acknowledgementTimestamp\" : <Timestamp in Unix Epoch>,
+      \"acknowledgementType\" : \"<Acknowledgement Type>\",
+      \"acknowledgedConversationEntryIdentifier\" : \"<Acknowledged Conversation Entry Identifier>\",
+      \"acknowledgmentCreatedConversationEntryIdentifier\" : \"<Acknowledgment Created Conversation Entry Identifier>\"
+    }, {..}, {..} . . . {..}]
+}" http://localhost:8085/api/v1/acknowledgement
+```
+
+Note: Only maximum of 25 acknowledgments are supported per request
+
 #### Conversation API
 
 Example request for establishing a conversation, be sure to replace placeholder values `<..>`
