@@ -685,7 +685,7 @@ components:
       properties:
         success:
           type: "boolean"
-          description: "Status of the consent status update request"
+          description: "Status of the Acknowledgement request"
       required:
       - "success"
     RegisterCapabilitiesResponse:
