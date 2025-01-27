@@ -62,7 +62,7 @@ components:
       properties:
         success:
           type: boolean
-          description: Status of the consent status update request
+          description: Status of the Acknowledgement request
       required:
       - success
     FieldRestrictionType:
@@ -679,15 +679,6 @@ components:
       - "id"
       - "attachmentIndex"
       - "contentLength"
-    AcknowledgementResponse:
-      description: "Response after sending read / delivered acknowledgment"
-      type: "object"
-      properties:
-        success:
-          type: "boolean"
-          description: "Status of the Acknowledgement request"
-      required:
-      - "success"
     RegisterCapabilitiesResponse:
       description: "Response after registering capabilities"
       type: "object"
