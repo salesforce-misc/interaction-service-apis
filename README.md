@@ -163,6 +163,32 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "Author
 ```
 Note: Effective Spring ‘24, payloads with `"entryType": "MessageDeliveryFailed"` must set `"appType": "custom"`, and `"role": "EndUser"`. If `appType` and `role` are set to any other values, the request fails.
 
+- Interaction request with Routing Attributes
+
+```
+curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "AuthorizationContext: <AuthorizationContext>" -H "content-type:multipart/form-data" -H "RequestId: <RequestId>" -X POST -F "json={
+  \"to\": \"<ChannelAddressIdentifier>\",
+  \"from\": \"<EndUserClientIdentifier>\",
+  \"routingAttributes\" : {\"<channelVariable>\" : \"<value>\", \"<channelVariable>\" : \"<value>\"},
+  \"interactions\": [{
+    \"timestamp\": <Timestamp in Unix Epoch>,
+    \"interactionType\": \"EntryInteraction\",
+    \"payload\": {
+      \"id\": \"<InteractionId>\",
+      \"entryType\": \"Message\",
+      \"abstractMessage\": {
+        \"messageType\": \"StaticContentMessage\",
+        \"id\": \"<InteractionId>\",
+        \"staticContent\": {
+          \"formatType\": \"Text\",
+          \"text\": \"Hi there\"
+        }
+      }
+    }
+  }]
+};type=application/json" http://localhost:8085/api/v1/interactions
+```
+
 - Interaction request with file attachment
 
 Prerequisites for getting file attachment upload working in local
