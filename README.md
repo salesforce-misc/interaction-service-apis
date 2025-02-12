@@ -188,6 +188,7 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H "OrgId: <OrgId>" -H "Author
   }]
 };type=application/json" http://localhost:8085/api/v1/interactions
 ```
+Note: routingAttributes for Interaction request will only be applicable for OTT. For CCaaS, routingAttributes are to be passed via RouteWork API.
 
 - Interaction request with file attachment
 
