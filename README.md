@@ -618,6 +618,38 @@ Here `"subject":"005xx0000012345"` is the salesforce id of sender.
 
 Note: In the payload examples above, the key "my__event__e" is the developer name for the outbound message customer event configured in salesforce setup. The keys "my__event__chnlAddrIdField__c", "my__event__payloadField__c", "my__event__recipientField__c" and "my__event__EventType__c" are corresponding custom fields "Custom Event Channel Address Id Field", "Custom Event Payload Field", "Custom Event Recipient Field", "Custom event type Field" defined in the outbound message customer event.
 
+### The RoutingRequested event 
+```
+{
+    "channelAddressIdentifier": "afc64d6f-ad61-4df2-82f7-b2fa83540c78",
+    "recipient": {
+        "appType": "custom",
+        "subject": "meu003",
+        "role": "EndUser"
+    },
+    "payload": {
+        "conversationIdentifier": "06f6c69b-bf42-4ec2-a6fa-9ae595218ea0",
+        "routingParameters": {
+            "queueId": null,
+            "channelData": "{\"eventId\":\"d3bdacb1-49b4-4fbd-9adb-919319631db4\",\"routerParticipantSubject\":\"cb1e4929-d5fd-41a1-9478-a420667f58c8\",\"routingType\":\"Transfer\",\"conversationId\":\"06f6c69b-bf42-4ec2-a6fa-9ae595218ea0\"}",
+            "isTransfer": true,
+            "routingConfigId": null,
+            "userId": null,
+            "isFallbackOnPsrNotCreated": null,
+            "serviceChannelId": null,
+            "isEstimatedWaitTimeRequested": null,
+            "skillsList": [],
+            "botId": null,
+            "flowId": "300SG00000jJder",
+            "isScrt2": true,
+            "isUserRequired": null
+        },
+        "routingType": "Transfer",
+        "workRecordId": null
+    }
+}
+```
+
 ## Additional Notes
 Use of the code in this repository with Salesforce products or services should be used in accordance with any applicable developers guides on [developer.salesforce.com](https://developer.salesforce.com/) and may be subject to additional terms of use, including but not limited to the [Salesforce Program Agreement - Program Terms for the Salesforce Developers Program](https://www.salesforce.com/company/program-agreement/#devs).
 
