@@ -1425,6 +1425,61 @@ components:
       type: "string"
       description: "UUID that references a message"
       example: "57904eb6-5352-4c5e-adf6-5f100572cf5d"
+    AcknowledgementRequest:
+      type: object
+      description: "Request body for acknowledgement API"
+      properties:
+        sender:
+          $ref: '#/components/schemas/Participant'
+        conversationIdentifier:
+          type: string
+          description: Conversation Identifier
+          maxLength: 240
+        acknowledgements:
+          type: array
+          minItems: 1
+          maxItems: 25
+          description: "List of Read and Delivered acknowledgements"
+          items:
+            $ref: '#/components/schemas/Acknowledgement'
+      required:
+        - sender
+        - conversationIdentifier
+        - acknowledgements
+    Acknowledgement:
+      type: object
+      properties:
+        acknowledgementType:
+          $ref: '#/components/schemas/AcknowledgementType'
+        acknowledgedConversationEntryIdentifier:
+          type: string
+          description: The unique identifier for the conversation entry this acknowledgement is associated with
+        acknowledgmentCreatedConversationEntryIdentifier:
+          type: string
+          description: The client-supplied unique identifier to set when storing the new acknowledgement conversation entry
+        acknowledgementTimestamp:
+          type: string
+          description: The timestamp associated with the acknowledgement
+      required:
+        - acknowledgementType
+        - acknowledgedConversationEntryIdentifier
+        - acknowledgmentCreatedConversationEntryIdentifier
+        - acknowledgementTimestamp
+    AcknowledgementResponse:
+      type: object
+      description: "Response after sending read / delivered acknowledgment"
+      properties:
+        success:
+          type: boolean
+          description: Status of the consent status update request
+      required:
+        - success
+    AcknowledgementType:
+      description: Acknowledgement Type
+      type: string
+      enum:
+        - Read
+        - Delivered
 servers:
 - url: "/api/v1/"
 openapi: "3.0.0"
@@ -1945,6 +2000,56 @@ paths:
         in: "header"
         required: true
         example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
+  /acknowledgement:
+    post:
+      summary: Marks messages as read / delivered
+      operationId: post-acknowledgement
+      responses:
+        default:
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AcknowledgementResponse'
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AcknowledgementResponse'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AcknowledgementRequest'
+      parameters:
+        - in: header
+          name: Authorization
+          description: "The access token generated to make requests to the Interaction Service APIs"
+          example: Bearer XXXXXX
+          required: true
+          schema:
+            type: string
+        - name: OrgId
+          in: header
+          description: "Organization Id used to verify the request against the auth token"
+          example: 00Dxxxxxxxxxxxx
+          required: true
+          schema:
+            type: string
+        - name: AuthorizationContext
+          in: header
+          description: "Specify the extra info for request authorization"
+          required: true
+          schema:
+            type: string
+        - name: RequestId
+          in: header
+          description: "UUID that references this request"
+          required: true
+          schema:
+            type: string
+          example: f7904eb6-5352-4c5e-adf6-5f100572cf5d
 info:
   title: "Interaction"
   version: "0.0.1"
