@@ -476,8 +476,9 @@ curl -v \
 #### ConversationHistory API
 
 The API supports validation to ensure that partners don’t import conversations older than 24 hrs.
+Additionally, the leftTime field is required for Chatbot participants.
 
-Example request for sending text-based conversation History Request, be sure to replace placeholder values `<..>`
+Example request for sending text-based conversation history for establishing a new session, be sure to replace other placeholder values `<..>`
 
 ```bash
 curl -v \
@@ -497,7 +498,8 @@ curl -v \
             \"role\": \"<ParticipantRole>\",
             \"appType\": \"<AppType>\"
         },
-      \"joinedTime\": <Timestamp in Unix Epoch Milliseconds>
+      \"joinedTime\": <Timestamp in Unix Epoch Milliseconds>,
+      \"leftTime\":<Timestamp in Unix Epoch>
     }
   ],
   \"conversationEntries\": [
@@ -521,11 +523,212 @@ curl -v \
             }
         }
     }
-  ]
+  ],
+   \"messagingSession\": {
+    \"messagingSessionRequestType\": \"EstablishMessagingSession\",
+    \"payload\": {
+      \"startTime\": \"<Timestamp in Unix Epoch>\",
+      \"endTime\":  \"<Timestamp in Unix Epoch>\" //optional
+    }
+  }
 }" http://localhost:8085/api/v1/conversationHistory
 ```
 
+Example request for sending an attachment-based conversation history request for establishing a new session, be sure to replace other placeholder values `<..>`
 
+```bash
+curl -v \
+-H "Authorization: Bearer <AccessToken>" \
+-H "content-type: application/json" \
+-H "OrgId: <OrgId>" \
+-H "AuthorizationContext: <AuthorizationContext>" \
+-H "AuthorizationContextType: <AuthorizationContextType>" \
+-H "RequestId: <RequestId>" \
+-X POST -d "{
+  \"channelAddressIdentifier\": \"<channelAddressIdentifier>\",
+  \"conversationParticipants\": [
+    {
+      \"displayName\": \"<displayName>\",
+      \"participant\": {
+            \"subject\": \"<unique identifier for the participant>\",
+            \"role\": \"<ParticipantRole>\",
+            \"appType\": \"<AppType>\"
+        },
+      \"joinedTime\":  <Timestamp in Unix Epoch Milliseconds>,
+      \"leftTime\":<Timestamp in Unix Epoch>
+    }
+  ],
+  \"conversationEntries\": [
+    {
+        \"clientTimestamp\":  <Timestamp in Unix Epoch Milliseconds>,
+        \"sender\": {
+            \"subject\": \"<unique identifier for the participant>\",
+            \"role\": \"<ParticipantRole>\",
+            \"appType\": \"<AppType>\"
+        },
+        \"entryPayload\": {
+            \"entryType\": \"Message\",
+            \"id\": \"<payloadId>\",
+            \"abstractMessage\": {
+                \"messageType\": \"StaticContentMessage\",
+                \"inReplyToMessageId\": <inReplyToMessageId>,
+                \"id\": \"<messageId>\",
+                 \"references\": [{
+                    \"recordId\": \"<ContentVersionId>\",
+                    \"id\": \"<referenceId>\"
+                  }],
+                \"staticContent\": {
+                    \"formatType\": \"Attachments\",
+                    \"text\": <text>,
+                    \"attachments\": [
+                      {
+                        \"name\": \"pdf-sample.pdf\",
+                        \"attachmentUploadResult\": <attachmentUploadResult>,
+                        \"id\": \"<attachmentId>\",
+                        \"mimeType\": \"<supported-mimeTypes>\",
+                        \"url\": \"<publicURl-of-uploaded-file>\",
+                        \"referenceId\": \"<referenceId>\"
+                      }
+                    ]
+                }
+            }
+        }
+    }
+  ],
+   \"messagingSession\": {
+    \"messagingSessionRequestType\": \"EstablishMessagingSession\",
+    \"payload\": {
+      \"startTime\": \"<Timestamp in Unix Epoch>\",
+      \"endTime\":  \"<Timestamp in Unix Epoch>\" //optional
+    }
+  }
+}" http://localhost:8085/api/v1/conversationHistory
+```
+
+Example request for sending text-based conversation history for an existing session, be sure to replace other placeholder values `<..>`
+
+```bash
+curl -v \
+-H "Authorization: Bearer <AccessToken>" \
+-H "content-type: application/json" \
+-H "OrgId: <OrgId>" \
+-H "AuthorizationContext: <AuthorizationContext>" \
+-H "AuthorizationContextType: CONVERSATIONCHANNELDEFINITION" \
+-H "RequestId: <RequestId>" \
+-X POST -d '{
+  "channelAddressIdentifier": "<channelAddressIdentifier>",
+  "conversationParticipants": [
+    {
+      "displayName": "<displayName>",
+      "participant": {
+            "subject": "<participantSubject>",
+            "role": "<participantRole>",
+            "appType": "<participantAppType>"
+        },
+      "joinedTime":<Timestamp in Unix Epoch>
+      "leftTime":<Timestamp in Unix Epoch>
+    }
+  ],
+  "conversationEntries": [
+    {
+        "clientTimestamp": <Timestamp in Unix Epoch>,
+        "sender": {
+            "subject": "<senderSubject>",
+            "role": "<senderRole>",
+            "appType": "<senderAppType>"
+        },
+        "entryPayload": {
+            "entryType": "<entryType>",
+            "id": "<payloadId>",
+            "abstractMessage": {
+                "messageType": "<messageType>",
+                "id": "<messageId>",
+                "staticContent": {
+                    "formatType": "<formatType>",
+                    "text": "<text>"
+                }
+            }
+        }
+    }
+  ],
+   "messagingSession": {
+    "messagingSessionRequestType": "AttachMessagingSession",
+    "payload": {
+      "sessionId": "<sessionId>"
+    }
+  }
+}' http://localhost:8085/api/v1/conversationHistory
+```
+
+Example request for sending an attachment-based conversation history request for an existing session, be sure to replace other placeholder values `<..>`
+
+```bash
+curl -v \
+-H "Authorization: Bearer <AccessToken>" \
+-H "content-type: application/json" \
+-H "OrgId: <OrgId>" \
+-H "AuthorizationContext: <AuthorizationContext>" \
+-H "AuthorizationContextType: <AuthorizationContextType>" \
+-H "RequestId: <RequestId>" \
+-X POST -d "{
+  \"channelAddressIdentifier\": \"<channelAddressIdentifier>\",
+  \"conversationParticipants\": [
+    {
+      \"displayName\": \"<displayName>\",
+      \"participant\": {
+            \"subject\": \"<unique identifier for the participant>\",
+            \"role\": \"<ParticipantRole>\",
+            \"appType\": \"<AppType>\"
+        },
+      \"joinedTime\":  <Timestamp in Unix Epoch Milliseconds>,
+      \"leftTime\":<Timestamp in Unix Epoch>
+    }
+  ],
+  \"conversationEntries\": [
+    {
+        \"clientTimestamp\":  <Timestamp in Unix Epoch Milliseconds>,
+        \"sender\": {
+            \"subject\": \"<unique identifier for the participant>\",
+            \"role\": \"<ParticipantRole>\",
+            \"appType\": \"<AppType>\"
+        },
+        \"entryPayload\": {
+            \"entryType\": \"Message\",
+            \"id\": \"<payloadId>\",
+            \"abstractMessage\": {
+                \"messageType\": \"StaticContentMessage\",
+                \"inReplyToMessageId\": <inReplyToMessageId>,
+                \"id\": \"<messageId>\",
+                 \"references\": [{
+                    \"recordId\": \"<ContentVersionId>\",
+                    \"id\": \"<referenceId>\"
+                  }],
+                \"staticContent\": {
+                    \"formatType\": \"Attachments\",
+                    \"text\": <text>,
+                    \"attachments\": [
+                      {
+                        \"name\": \"pdf-sample.pdf\",
+                        \"attachmentUploadResult\": <attachmentUploadResult>,
+                        \"id\": \"<attachmentId>\",
+                        \"mimeType\": \"<supported-mimeTypes>\",
+                        \"url\": \"<publicURl-of-uploaded-file>\",
+                        \"referenceId\": \"<referenceId>\"
+                      }
+                    ]
+                }
+            }
+        }
+    }
+  ],
+   \"messagingSession\": {
+    \"messagingSessionRequestType\": \"AttachMessagingSession\",
+    \"payload\": {
+      \"sessionId\":\"<sessionId>\"
+    }
+  }
+}" http://localhost:8085/api/v1/conversationHistory
+```
 ## outbound-custom-event-payload.yaml
 The [outbound-custom-event-payload.yaml](outbound-custom-event-payload.yaml) shows the outbound message custom event schema. Following are examples of the custom event payload received in "data" listener of the custome event after subscribe the event by topic name "my__event__e" shown in payload below for outbound message.
 
