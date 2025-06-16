@@ -967,6 +967,8 @@ components:
         conversationIdentifier:
           type: "string"
           description: "The conversation identifier associated with the work"
+        cancelReason:
+          $ref: "#/components/schemas/CancelReason"
       required:
       - "conversationIdentifier"
     PostConversationRequest:
@@ -1677,6 +1679,14 @@ components:
           type: "string"
           description: "api error code"
           maxLength: 240
+    CancelReason:
+      type: "string"
+      description: "Reason for cancelling the conference routing"
+      enum:
+        - "Unknown"
+        - "Unavailable"
+        - "Decline"
+        - "Cancel"
     AbstractFormResponse:
       type: "object"
       properties:
@@ -1922,6 +1932,8 @@ components:
           type: "string"
           maxLength: 15
           minLength: 15
+        routingType:
+          $ref: "#/components/schemas/RoutingType"
         success:
           type: "boolean"
           description: "Whether routing is successful"
@@ -2181,6 +2193,7 @@ components:
       description: "Agent action enum, in 254 we only support 'Transfer'"
       enum:
       - "Transfer"
+      - "Conference"
     AbstractTitleInteractionItem:
       type: "object"
       properties:

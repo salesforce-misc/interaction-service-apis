@@ -328,21 +328,23 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H 'AuthorizationContext: <Aut
 }" <local/staging test url>/api/v1/route
 ```
 
-- Interaction request to Delete PSRs for a given Conversation ID
+- Interaction request to Delete PSRs for a given Conversation ID and optional cancel reason
 
 ```bash
 curl -v -H $'Authorization: Bearer <AccessToken>' -H 'AuthorizationContext: <AuthorizationContext>' -H 'RequestId: <RequestId>' -H 'OrgId: <OrgId>' -H 'Content-Type: application/json' -X DELETE -d "{
-    \"conversationIdentifier\": \"<conversationIdentifier>\"
+    \"conversationIdentifier\": \"<conversationIdentifier>\",
+    \"cancelReason\": \"<cancelReason>\"
 }" <local/staging test url>/api/v1/route
 ```
 #### RoutingResult API
 
-Example request to notify routing result, be sure to replace placeholder values <..>
+Example request to notify routing result, be sure to replace placeholder values <..> routingType being optional
 
 - Request to notify success routing result
 
 ```bash
 curl -v -H $'Authorization: Bearer <AccessToken>' -H 'AuthorizationContext: <AuthorizationContext>' -H 'RequestId: <RequestId>' -H 'OrgId: <OrgId>' -H 'Content-Type: application/json' -X POST -d "{
+    \"routingType\":\"<routingType>\"
     \"workItemId\":\"<WorkItemId>\",
     \"conversationIdentifier\":\"<ConversationId>\",
     \"success\":true,
@@ -350,10 +352,11 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H 'AuthorizationContext: <Aut
 }" http://localhost:8085/api/v1/routingResult
 ```
 
-- Request to notify failure routing result
+- Request to notify failure routing result routingType being optional
 
 ```bash
 curl -v -H $'Authorization: Bearer <AccessToken>' -H 'AuthorizationContext: <AuthorizationContext>' -H 'RequestId: <RequestId>' -H 'OrgId: <OrgId>' -H 'Content-Type: application/json' -X POST -d "{
+    \"routingType\":\"<routingType>\",
     \"workItemId\":\"<WorkItemId>\",
     \"conversationIdentifier\":\"<ConversationId>\",
     \"success\":false,
