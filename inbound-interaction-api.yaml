@@ -151,6 +151,17 @@ components:
       required:
       - "titleItem"
       - "interactionItems"
+    RoutingWorkType:
+      type: "string"
+      description: "work event type"
+      enum:
+      - "Assigned"
+      - "Accepted"
+      - "Cancelled"
+      - "Closed"
+      - "Declined"
+      - "TransferError"
+      - "Transferred"
     FieldRestrictionType:
       type: "string"
       description: "The set field indicated the restriction type for this FieldRestriction."
@@ -317,6 +328,8 @@ components:
       properties:
         inReplyToMessageId:
           $ref: "#/components/schemas/InReplyToMessageId"
+        customHandlingType:
+          $ref: "#/components/schemas/CustomHandlingType"
         id:
           $ref: "#/components/schemas/MessageId"
         messageType:
@@ -387,6 +400,7 @@ components:
       description: "Type of custom Integration"
       enum:
       - "CustomChannelIntegration"
+      - "CustomBotIntegration"
     InteractionRequest:
       type: "object"
       properties:
@@ -466,12 +480,21 @@ components:
         flow:
           description: "Enter Flow details which needs to be used for routing"
           $ref: "#/components/schemas/FlowInfo"
+    PostConversationEntryResponse:
+      type: "object"
+      properties:
+        success:
+          type: "boolean"
+      required:
+      - "success"
     ChoicesCarousel:
       description: "Choices as a carousel with options"
       allOf:
         - $ref: "#/components/schemas/AbstractChoices"
         - type: "object"
           properties:
+            title:
+              type: "string"
             items:
               minItems: 1
               description: "Items must must contain more then one TitleOptionItem for the choice options."
@@ -539,6 +562,16 @@ components:
       - "appType"
       - "subject"
       - "role"
+    Note:
+      description: "A note entry (for private whisper messages)"
+      allOf:
+      - $ref: "#/components/schemas/AbstractEntry"
+      - type: "object"
+        properties:
+          abstractMessage:
+            $ref: "#/components/schemas/AbstractMessage"
+        required:
+        - "abstractMessage"
     TextValue:
       description: "A text value"
       allOf:
@@ -585,6 +618,10 @@ components:
       description: "Enum listing unique identifiers for app services."
       enum:
       - "custom"
+      - "agent"
+      - "chatbot"
+      - "conversation"
+      - "live_message"
       - "iamessage"
     Link:
       description: "A web link."
@@ -607,6 +644,15 @@ components:
       - "entryType"
       discriminator:
         propertyName: "entryType"
+    RoutingFailureType:
+      type: "string"
+      description: "How routing failed or succeeded"
+      enum:
+      - "None"
+      - "Unknown"
+      - "SubmissionError"
+      - "RoutingError"
+      - "Cancelled"
     InputSectionType:
       type: "string"
       enum:
@@ -753,6 +799,20 @@ components:
           description: "List of WorkItem Ids"
         success:
           type: "boolean"
+    GetConversationEntriesResponse:
+      type: "object"
+      description: "Response after fetching conversation entries"
+      properties:
+        success:
+          type: "boolean"
+          description: "Indicates whether the requested action was successfully performed"
+        conversationEntries:
+          minItems: 0
+          description: "List of entries present in the conversation"
+          maxItems: 20
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ConversationEntryResponse"
     NamedValue:
       description: "A value with a unique name"
       additionalProperties: false
@@ -765,6 +825,19 @@ components:
       required:
       - "name"
       - "value"
+    ConversationEntryResponse:
+      type: "object"
+      description: "Object for holding a single conversation entry in a conversation"
+      properties:
+        clientTimestamp:
+          format: "int64"
+          description: "Time at which the message was sent in the conversation"
+          type: "integer"
+          example: 1688190840000
+        sender:
+          $ref: "#/components/schemas/Participant"
+        entryPayload:
+          $ref: "#/components/schemas/AbstractEntry"
     TitleItem:
       allOf:
       - $ref: "#/components/schemas/AbstractTitleItem"
@@ -819,6 +892,11 @@ components:
       required:
       - "userId"
       - "workItemId"
+    FormResultType:
+      type: "string"
+      enum:
+      - "FormRecordsResult"
+      - "FormErrorResult"
     ConsentResponse:
       description: "Response after updating Consent Status of the Messaging End User from core"
       type: "object"
@@ -841,6 +919,18 @@ components:
             format: "date"
         required:
         - "dateValue"
+    OptionValue:
+      description: "A value that presents an option of a choice or a form"
+      additionalProperties: false
+      type: "object"
+      properties:
+        value:
+          $ref: "#/components/schemas/AbstractValue"
+        optionIdentifier:
+          $ref: "#/components/schemas/UniqueIdentifier"
+      required:
+      - "optionIdentifier"
+      - "value"
     EntryId:
       type: "string"
       description: "UUID that references this entry"
@@ -855,6 +945,14 @@ components:
       enum:
       - "TitleLinkItem"
       - "TitleOptionItem"
+    QueueRoutingConfigDetails:
+      description: "Queue routing based configuration details."
+      allOf:
+      - $ref: "#/components/schemas/RoutingConfigurationDetails"
+      - type: "object"
+        properties:
+          queueId:
+            type: "string"
     RecordId:
       type: "string"
       description: "An id of an application record"
@@ -988,6 +1086,15 @@ components:
       required:
       - "channelAddressIdentifier"
       - "participants"
+    AbstractFormResult:
+      type: "object"
+      properties:
+        resultType:
+          $ref: "#/components/schemas/FormResultType"
+      required:
+      - "resultType"
+      discriminator:
+        propertyName: "resultType"
     StaticContentExperienceType:
       description: "A uni-directional Experience Type Message"
       allOf:
@@ -1033,6 +1140,21 @@ components:
       - "from"
       - "to"
       - "interactions"
+    FormError:
+      type: "object"
+      properties:
+        errorMessage:
+          type: "string"
+          description: "A non localized message. Do not use for display in UI."
+        errorCode:
+          type: "string"
+          description: "A Salesforce API Error code. Can be used for displaying a localized error in UI"
+        errorType:
+          description: "The type of error. To be used for displaying a localized error message in UI"
+          $ref: "#/components/schemas/FormErrorType"
+      required:
+      - "errorType"
+      - "errorMessage"
     FormResponseMessage:
       description: "MO Form response message"
       allOf:
@@ -1135,6 +1257,17 @@ components:
       - "MessageDeliveryFailed"
       - "TypingStartedIndicator"
       - "TypingStoppedIndicator"
+      - "DeliveryAcknowledgement"
+      - "ReadAcknowledgement"
+      - "RoutingWorkResult"
+      - "ParticipantChanged"
+      - "RoutingResult"
+      - "Note"
+      - "FlagRaise"
+      - "FlagLower"
+      - "EndUserConsentUpdated"
+      - "SessionStatusChanged"
+      - "ConsultConversationInfo"
     DoubleValue:
       description: "A double value"
       allOf:
@@ -1186,6 +1319,7 @@ components:
         propertyName: "formatType"
         mapping:
           TimePicker: "#/components/schemas/ChoicesTimePicker"
+          MessageDefinition: "#/components/schemas/ChoicesMessageDefinition"
           Buttons: "#/components/schemas/ChoicesButtons"
           Carousel: "#/components/schemas/ChoicesCarousel"
           QuickReplies: "#/components/schemas/ChoicesQuickReplies"
@@ -1345,6 +1479,100 @@ components:
             $ref: "#/components/schemas/UniqueId"
         required:
         - "videoId"
+    MessageDefinitionNameOrId:
+      type: "string"
+      description: "A reference to an message definition by unique name or id"
+    RoutingWorkResult:
+      description: "Result of routing work"
+      allOf:
+      - $ref: "#/components/schemas/AbstractEntry"
+      - type: "object"
+        properties:
+          queueId:
+            type: "string"
+            description: "Queue assigned work"
+          errorMessages:
+            type: "array"
+            description: "Error occurred while routing the work"
+            items:
+              type: "string"
+          workTargetId:
+            type: "string"
+            description: "Routing target associated with this record (e.g.: MessagingSession)"
+          agentSessionId:
+            type: "string"
+            description: "Assigned Agent Id"
+          routingType:
+            description: "Routing Type"
+            $ref: "#/components/schemas/RoutingType"
+          workType:
+            description: "Work event type"
+            $ref: "#/components/schemas/RoutingWorkType"
+          botId:
+            type: "string"
+            description: "Bot assigned work"
+          agentGroupIds:
+            type: "array"
+            description: "GroupId for the assigned agent"
+            items:
+              type: "string"
+          workId:
+            type: "string"
+            description: "Work SFDC record ID"
+        required:
+        - "conversationId"
+        - "workId"
+        - "workTargetId"
+        - "workType"
+        - "errorMessages"
+    RoutingResult:
+      description: "Result of conversation routing if either successful or failure"
+      allOf:
+      - $ref: "#/components/schemas/AbstractEntry"
+      - type: "object"
+        properties:
+          recordId:
+            type: "string"
+            description: "Routed record ID from omni event - if successful"
+          errorMessages:
+            type: "array"
+            description: "Any messages that occurred during routing - can be errors from before/after omni or status messages depending on the failureType"
+            items:
+              type: "string"
+          pendingServiceRoutingId:
+            type: "string"
+            description: "PSR ID from omni event - if successful"
+          skipRouterCPRemovalIfNoRoutingFailures:
+            type: "boolean"
+            description: "Indicates whether the router CP removal should be skipped if there are no routing failures"
+          workOwnerId:
+            type: "string"
+            description: "The SFDC Id of user who is requesting cancellation"
+          routingType:
+            description: "Routing Type"
+            $ref: "#/components/schemas/RoutingType"
+          estimatedWaitTime:
+            description: "Estimated Wait Time value and whether this Estimated Wait Time is requested"
+            $ref: "#/components/schemas/EstimatedWaitTime"
+          failureReason:
+            type: "string"
+            description: "Indicates the specific reason for the failure"
+          failureType:
+            description: "Indicates what type of failure occurred"
+            $ref: "#/components/schemas/RoutingFailureType"
+          isExternallyRouted:
+            type: "boolean"
+            description: "Indicates whether routing is initiated from an external partner system or not"
+          cancelReason:
+            description: "Reason for cancelling the conference routing"
+            $ref: "#/components/schemas/CancelReason"
+          routingConfigurationDetails:
+            description: "Routing Configuration Detail, including routing method and details associated with the routing method."
+            $ref: "#/components/schemas/RoutingConfigurationDetails"
+        required:
+        - "routingType"
+        - "failureType"
+        - "errorMessages"
     AbstractLocationItem:
       description: "The base type for locations."
       type: "object"
@@ -1434,11 +1662,6 @@ components:
         required:
         - "identifier"
         - "timeSlotOptionItems"
-    MessagingSessionRequestType:
-      type: "string"
-      enum:
-      - "EstablishMessagingSession"
-      - "AttachMessagingSession"
     SelectNavigationInput:
       description: "A select input that allow navigation to a specifc section"
       allOf:
@@ -1477,6 +1700,9 @@ components:
       enum:
       - "EndUser"
       - "Chatbot"
+      - "Agent"
+      - "Supervisor"
+      - "System"
     ChoicesResponseMessage:
       description: "MO response message to a choices message"
       allOf:
@@ -1513,6 +1739,14 @@ components:
             format: "date-time"
         required:
         - "dateTimeValue"
+    FlagRaise:
+      description: "A Flag Raise entry"
+      allOf:
+      - $ref: "#/components/schemas/AbstractEntry"
+      - type: "object"
+        properties:
+          abstractMessage:
+            $ref: "#/components/schemas/AbstractMessage"
     DatePickerInput:
       description: "An input to pick a date"
       allOf:
@@ -1593,6 +1827,12 @@ components:
       required:
       - "optionItem"
       - "nextInputId"
+    DataDirectionEnum:
+      type: "string"
+      description: "The direction to order a list of data"
+      enum:
+      - "FROM_START"
+      - "FROM_END"
     TitleOptionItem:
       allOf:
       - $ref: "#/components/schemas/AbstractTitleInteractionItem"
@@ -1698,6 +1938,7 @@ components:
         propertyName: "formatType"
         mapping:
           Inputs: "#/components/schemas/FormResponseInputs"
+          Result: "#/components/schemas/FormResponseResult"
     AbstractValue:
       description: "The base type from which simple value types extends"
       type: "object"
@@ -1763,6 +2004,21 @@ components:
         propertyName: "formatType"
         mapping:
           Inputs: "#/components/schemas/FormInputs"
+          MessageDefinition: "#/components/schemas/FormMessageDefinition"
+    FormRecordsResult:
+      description: "The resulting records of handling a form response"
+      allOf:
+      - $ref: "#/components/schemas/AbstractFormResult"
+      - type: "object"
+        properties:
+          records:
+            minItems: 1
+            maxItems: 1
+            type: "array"
+            items:
+              $ref: "#/components/schemas/RecordResult"
+        required:
+        - "records"
     InteractionType:
       type: "string"
       enum:
@@ -1832,11 +2088,19 @@ components:
       type: "string"
       enum:
       - "FormSplashScreen"
+    AgentWorkStatus:
+      type: "string"
+      enum:
+      - "Accept"
+      - "Close"
+      - "Decline"
+      - "Cancel"
     AuthorizationContextType:
       type: "string"
       enum:
       - "ConversationChannelDefinition"
       - "EmbeddedMessagingChannel"
+      - "ExternalConversationParticipant"
     ExperienceTypeValue:
       description: "An Experience Type value"
       allOf:
@@ -1913,6 +2177,22 @@ components:
       - "acknowledgedConversationEntryIdentifier"
       - "acknowledgmentCreatedConversationEntryIdentifier"
       - "acknowledgementTimestamp"
+    ParticipantChangedClientMenuMetadata:
+      type: "object"
+      description: "A dialog that client displays in the menu"
+      properties:
+        menuOptions:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+              optionIdentifier:
+                type: "string"
+          required:
+          - "optionIdentifier"
+          - "title"
     RoutingResultRequest:
       description: "Payload to routing result"
       type: "object"
@@ -1942,6 +2222,446 @@ components:
       - "conversationIdentifier"
       - "success"
       - "externallyRouted"
+    FormErrorType:
+      type: "string"
+      enum:
+      - "InvalidFormResponse"
+      - "FormRequestExpired"
+      - "ApiResultErrorCode"
+      - "InternalServerError"
+    DeliveryAcknowledgement:
+      description: "Delivery acknowledgement of a conversation entry to a particular recipient"
+      allOf:
+      - $ref: "#/components/schemas/AbstractEntry"
+      - type: "object"
+        properties:
+          recipient:
+            $ref: "#/components/schemas/Participant"
+          acknowledgedConversationEntryIdentifier:
+            type: "string"
+            description: "The conversation entry id of the entry referenced by the acknowledgement"
+          acknowledgementTimestamp:
+            type: "integer"
+            format: "int64"
+        required:
+        - "acknowledgedConversationEntryIdentifier"
+        - "acknowledgementTimestamp"
+        - "recipient"
+    ReadAcknowledgement:
+      description: "Read acknowledgement high water mark of a conversation entry for a participant in a conversation"
+      allOf:
+      - $ref: "#/components/schemas/AbstractEntry"
+      - type: "object"
+        properties:
+          recipient:
+            $ref: "#/components/schemas/Participant"
+          acknowledgedConversationEntryIdentifier:
+            type: "string"
+            description: "The conversation entry id of the entry referenced by the acknowledgement"
+          acknowledgementTimestamp:
+            type: "integer"
+            format: "int64"
+        required:
+        - "acknowledgedConversationEntryIdentifier"
+        - "acknowledgementTimestamp"
+        - "recipient"
+    SessionStatusChanged:
+      description: "A session status changed"
+      allOf:
+      - $ref: "#/components/schemas/AbstractEntry"
+      - type: "object"
+        properties:
+          conversationIdentifier:
+            type: "string"
+            description: "Conversation Identifier"
+          channelAddressIdentifier:
+            type: "string"
+            description: "Channel Address Identifier"
+          sessionStatusPrev:
+            $ref: "#/components/schemas/SessionStatus"
+            description: "Previous value for session status"
+          sessionEndedByRole:
+            $ref: "#/components/schemas/ParticipantRole"
+            description: "The role of the participant that ended the session"
+          sessionEndTime:
+            format: "int64"
+            description: "Start epoch timestamp for session end time"
+            type: "integer"
+            example: "1573503300"
+          sessionStatus:
+            $ref: "#/components/schemas/SessionStatus"
+            description: "Updated session status"
+          sessionStartTime:
+            format: "int64"
+            description: "Start epoch timestamp for session start time"
+            type: "integer"
+            example: "1573503300"
+          sessionId:
+            type: "string"
+            description: "Session id"
+        required:
+        - "sessionId"
+        - "channelAddressIdentifier"
+        - "conversationIdentifier"
+        - "sessionStatus"
+        - "sessionStartTime"
+    EndUserConsentUpdated:
+      description: "An end user consent updated entry"
+      allOf:
+      - $ref: "#/components/schemas/AbstractEntry"
+      - type: "object"
+        properties:
+          isEndUserInitiated:
+            type: "boolean"
+            description: "true if the end user initiated the consent action."
+          initiatingConversationEntryIdentifier:
+            type: "string"
+            description: "Identifier that indicates the conversation entry that initiated the consent update."
+            example: "a133c185-73a7-4adf-b6d9-b7fd62babb4e"
+          endUserSubject:
+            type: "string"
+            description: "End user for which the consent got updated."
+          endUserDisplayName:
+            type: "string"
+            description: "Display name of the end user which can be null."
+          confirmationConversationEntryIdentifier:
+            type: "string"
+            description: "Identifier that indicates the conversation entry that was sent as a consent confirmation to the end user."
+            example: "b233c185-73a7-4adf-b6d9-b7fd62babb4e"
+          consentStatus:
+            $ref: "#/components/schemas/ConsentStatus"
+            description: "The end user's consent status."
+        required:
+        - "endUserSubject"
+        - "consentStatus"
+        - "isEndUserInitiated"
+    RecordResult:
+      type: "object"
+      properties:
+        recordReferenceId:
+          $ref: "#/components/schemas/UniqueId"
+        resultMessage:
+          type: "string"
+        isCreated:
+          type: "boolean"
+      required:
+      - "recordReferenceId"
+      - "isCreated"
+    ParticipantChangedOperation:
+      type: "string"
+      description: "set of participant changed operation"
+      enum:
+      - "add"
+      - "remove"
+      - "update"
+    ConsultConversationInfo:
+      description: "Consult conversation in a Multiparty conversation"
+      allOf:
+      - $ref: "#/components/schemas/AbstractEntry"
+      - type: "object"
+        properties:
+          conversationIdentifier:
+            type: "string"
+            description: "Id of the consult conversation"
+          timestamp:
+            type: "integer"
+            format: "int64"
+            description: "Timestamp of the consult conversation"
+        required:
+        - "conversationIdentifier"
+        - "timestamp"
+    FormErrorResult:
+      description: "The resulting error of handling a form response"
+      allOf:
+      - $ref: "#/components/schemas/AbstractFormResult"
+      - type: "object"
+        properties:
+          errors:
+            type: "array"
+            minItems: 1
+            items:
+              $ref: "#/components/schemas/FormError"
+        required:
+        - "errors"
+    SessionStatus:
+      type: "string"
+      description: "Enum denoting the status of the session in the conversation."
+      enum:
+      - "Active"
+      - "Ended"
+      - "Waiting"
+      - "New"
+      - "Consent"
+      - "Inactive"
+      - "Error"
+      - "Paused"
+    ChoicesMessageDefinition:
+      description: "Choices with option references"
+      allOf:
+      - $ref: "#/components/schemas/AbstractChoices"
+      - type: "object"
+        properties:
+          options:
+            type: "array"
+            minItems: 1
+            items:
+              $ref: "#/components/schemas/OptionValue"
+          messageDefinitionId:
+            $ref: "#/components/schemas/RecordId"
+            deprecated: true
+          optionReferences:
+            minItems: 0
+            type: "array"
+            items:
+              $ref: "#/components/schemas/OptionReference"
+            deprecated: true
+          messageDefinitionNameOrId:
+            $ref: "#/components/schemas/MessageDefinitionNameOrId"
+          targetLocale:
+            $ref: "#/components/schemas/Locale"
+            description: "The requested local the message should be translated into"
+            example: "en-US"
+          parameters:
+            type: "array"
+            items:
+              $ref: "#/components/schemas/NamedValue"
+        required:
+        - "messageDefinitionNameOrId"
+        - "options"
+    PostConversationEntryRequest:
+      description: "post conversationEntry request body"
+      type: "object"
+      properties:
+        conversationIdentifier:
+          description: "unique conversation identifier of the conversation"
+          type: "string"
+          maxLength: 240
+          example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+        sender:
+          $ref: "#/components/schemas/Participant"
+        conversationEntries:
+          minItems: 1
+          maxItems: 1
+          description: "List of messages to add to the conversation"
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ConversationEntryRequest"
+      required:
+      - "conversationIdentifier"
+      - "conversationEntries"
+      - "sender"
+    GetConversationEntriesRequest:
+      description: "Request parameters to fetch entries in a given conversation"
+      type: "object"
+      properties:
+        conversationIdentifier:
+          type: "string"
+          description: "The unique conversation identifier of the conversation"
+        limit:
+          format: "int32"
+          description: "The max number of entries to return"
+          type: "integer"
+          example: 5
+        startTime:
+          format: "int64"
+          description: "The start time to use when fetching Conversation Entries."
+          type: "integer"
+          example: 1688190840000
+        endTime:
+          format: "int64"
+          description: "The end time to use when fetching Conversation Entries."
+          type: "integer"
+          example: 1688190840000
+        direction:
+          $ref: "#/components/schemas/DataDirectionEnum"
+      required:
+      - "conversationIdentifier"
+      - "startTime"
+    UserAgentWork:
+      title: "User Agent Work"
+      allOf:
+      - $ref: "#/components/schemas/PatchAgentWorkRequest"
+      - type: "object"
+    CustomBotIntegration:
+      description: "Custom bot integration"
+      allOf:
+      - $ref: "#/components/schemas/AbstractCustomIntegration"
+      - type: "object"
+        properties:
+          extConvParticipantIntegDefDevName:
+            type: "string"
+            description: "Developer name of external conversation participant integration definition"
+            maxLength: 240
+          integrationNamespace:
+            type: "string"
+            description: "Integration Namespace represents developer namespace if that exists, or orgId if it does not"
+            maxLength: 240
+        required:
+        - "extConvParticipantIntegDefDevName"
+        - "integrationNamespace"
+    ParticipantChanged:
+      description: "A participant changed entry"
+      allOf:
+      - $ref: "#/components/schemas/AbstractEntry"
+      - type: "object"
+        properties:
+          entries:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                operation:
+                  $ref: "#/components/schemas/ParticipantChangedOperation"
+                menuMetadata:
+                  $ref: "#/components/schemas/ParticipantChangedClientMenuMetadata"
+                participant:
+                  $ref: "#/components/schemas/Participant"
+                displayName:
+                  type: "string"
+        required:
+        - "participant"
+    PatchAgentWorkRequest:
+      description: "Update the agent work for given external bot or agent"
+      type: "object"
+      properties:
+        workId:
+          type: "string"
+          description: "Agent work associated with an external bot or user"
+          example: "0BzSB000002jTO5"
+        contextType:
+          $ref: "#/components/schemas/AgentWorkContextType"
+        status:
+          $ref: "#/components/schemas/AgentWorkStatus"
+      required:
+      - "workId"
+      - "contextType"
+      - "status"
+      discriminator:
+        propertyName: "contextType"
+        mapping:
+          Agent: "#/components/schemas/UserAgentWork"
+          Chatbot: "#/components/schemas/BotAgentWork"
+    ConsentStatus:
+      type: "string"
+      description: "Enum denoting the consent status of the end user."
+      enum:
+      - "OptIn"
+      - "OptOut"
+    CustomHandlingType:
+      type: "string"
+      description: "Specifies the type of custom handling required for this message"
+      enum:
+      - "None"
+      - "Survey"
+    AgentRoutingConfigDetails:
+      description: "Agent routing based configuration details."
+      allOf:
+      - $ref: "#/components/schemas/RoutingConfigurationDetails"
+      - type: "object"
+        properties:
+          agentId:
+            type: "string"
+    PatchAgentWorkResponse:
+      description: "Response after performing actions on a work item"
+      type: "object"
+      properties:
+        errorDetail:
+          $ref: "#/components/schemas/Error"
+        success:
+          type: "boolean"
+          description: "Indicates whether the requested action was successfully performed"
+      required:
+      - "success"
+    RoutingConfigurationDetails:
+      description: "Definition of Routing Configuration Details including routing configuration type and other routing details associated with the routing configuration type."
+      type: "object"
+      properties:
+        routingConfigurationType:
+          $ref: "#/components/schemas/RoutingConfigurationType"
+      discriminator:
+        propertyName: "routingConfigurationType"
+        mapping:
+          QueueRoutingType: "#/components/schemas/QueueRoutingConfigDetails"
+          AgentRoutingType: "#/components/schemas/AgentRoutingConfigDetails"
+    Locale:
+      type: "string"
+      description: "A locale as defined by IETF BCP 47"
+      example: "en-US"
+    EstimatedWaitTime:
+      type: "object"
+      description: "Estimated Wait Time value and whether the Estimated Wait Time is requested or not."
+      properties:
+        estimatedWaitTimeInSeconds:
+          type: "integer"
+          format: "int32"
+        isEWTRequested:
+          type: "boolean"
+    BotAgentWork:
+      title: "Bot Agent Work"
+      allOf:
+      - $ref: "#/components/schemas/PatchAgentWorkRequest"
+      - type: "object"
+        properties:
+          workItemId:
+            type: "string"
+            description: "WorkItem Id in Salesforce"
+          botId:
+            type: "string"
+            description: "A unique identifier for the external bot handling the work or task."
+        required:
+        - "workItemId"
+        - "botId"
+    FormResponseResult:
+      description: "The result of handling a form response"
+      allOf:
+      - $ref: "#/components/schemas/AbstractFormResponse"
+      - type: "object"
+        properties:
+          result:
+            $ref: "#/components/schemas/AbstractFormResult"
+        required:
+        - "result"
+    FormMessageDefinition:
+      description: "Reference to a form message definition"
+      allOf:
+      - $ref: "#/components/schemas/AbstractForm"
+      - type: "object"
+        properties:
+          parameters:
+            type: "array"
+            items:
+              $ref: "#/components/schemas/NamedValue"
+          messageDefinitionNameOrId:
+            $ref: "#/components/schemas/MessageDefinitionNameOrId"
+          targetLocale:
+            $ref: "#/components/schemas/Locale"
+            description: "The requested local the message should be translated into"
+            example: "en-US"
+        required:
+        - "messageDefinitionNameOrId"
+    OptionReference:
+      description: "Deprecated. Replaced by OptionValue and ReferenceValue."
+      additionalProperties: false
+      type: "object"
+      properties:
+        optionId:
+          $ref: "#/components/schemas/UniqueId"
+        referenceId:
+          $ref: "#/components/schemas/UniqueId"
+      required:
+      - "optionId"
+      - "referenceId"
+      deprecated: true
+    FlagLower:
+      description: "A flag Lower entry"
+      allOf:
+      - $ref: "#/components/schemas/AbstractEntry"
+    RoutingConfigurationType:
+      type: "string"
+      description: "Enum for Routing Configuration Type"
+      enum:
+      - "QueueRoutingType"
+      - "AgentRoutingType"
     StringFieldRestriction:
       description: "String restriction for a message field."
       allOf:
@@ -2129,6 +2849,20 @@ components:
       - "endUserClientId"
       - "channelAddressIdentifier"
       - "consentStatus"
+    ConversationEntryRequest:
+      description: "a single message in a conversation"
+      type: "object"
+      properties:
+        clientTimestamp:
+          format: "int64"
+          description: "time at which the message was sent in the conversation"
+          type: "integer"
+          example: 1688190840000
+        entryPayload:
+          $ref: "#/components/schemas/AbstractEntry"
+      required:
+      - "clientTimestamp"
+      - "entryPayload"
     ChoicesResponseSelections:
       description: "The selections to a choices message"
       allOf:
@@ -2163,6 +2897,7 @@ components:
       - "Text"
       - "ExperienceType"
       - "Flow"
+      - "MessageDefinition"
       example: "Attachments"
     AssetType:
       type: "string"
@@ -2171,6 +2906,11 @@ components:
       - "ImageAsset"
       - "VideoAsset"
       - "DocumentAsset"
+    AgentWorkContextType:
+      type: "string"
+      enum:
+      - "Agent"
+      - "Chatbot"
     ConversationEntryHistory:
       description: "single entry in a conversation"
       type: "object"
@@ -2326,6 +3066,11 @@ paths:
         description: "Specify the extra info for request authorization"
         in: "header"
         required: true
+      - name: "AuthorizationContextType"
+        schema:
+          $ref: "#/components/schemas/AuthorizationContextType"
+        description: "type of the context for request"
+        in: "header"
       - name: "RequestId"
         schema:
           type: "string"
@@ -2476,6 +3221,11 @@ paths:
         description: "Specify the extra info for request authorization"
         in: "header"
         required: true
+      - name: "AuthorizationContextType"
+        schema:
+          $ref: "#/components/schemas/AuthorizationContextType"
+        description: "type of the context for request"
+        in: "header"
       - name: "RequestId"
         schema:
           type: "string"
@@ -2694,6 +3444,62 @@ paths:
         in: "header"
         required: true
         example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
+    patch:
+      summary: "Manage state and perform actions related to work items."
+      operationId: "patch-agent-work"
+      responses:
+        202:
+          description: "Accepted"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PatchAgentWorkResponse"
+        default:
+          description: "Unsuccessful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      description: "Enables partners to manage state and perform actions related to work items."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PatchAgentWorkRequest"
+      parameters:
+      - name: "Authorization"
+        schema:
+          type: "string"
+        description: "The access token generated to make requests to the Interaction Service APIs"
+        in: "header"
+        required: true
+        example: "Bearer XXXXXX"
+      - name: "OrgId"
+        schema:
+          type: "string"
+        description: "Organization Id used to verify the request against the auth token"
+        in: "header"
+        required: true
+        example: "00Dxxxxxxxxxxxx"
+      - name: "AuthorizationContext"
+        schema:
+          type: "string"
+        description: "Specify the extra info for request authorization"
+        in: "header"
+        required: true
+      - name: "AuthorizationContextType"
+        schema:
+          $ref: "#/components/schemas/AuthorizationContextType"
+        description: "Authorization request context type"
+        in: "header"
+        required: true
+      - name: "RequestId"
+        schema:
+          type: "string"
+        description: "UUID that references this request"
+        in: "header"
+        required: true
+        example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
   /conversation:
     post:
       summary: "Establish a conversation based on conversationAddressIdentifier and participants"
@@ -2740,6 +3546,119 @@ paths:
         in: "header"
         required: true
         example: "Partner_ChannelDefinition"
+      - name: "RequestId"
+        schema:
+          type: "string"
+        description: "UUID that references this request"
+        in: "header"
+        required: true
+        example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
+  /conversationEntry:
+    post:
+      summary: "Add conversation entries to a conversation"
+      operationId: "post-conversation-entry"
+      responses:
+        202:
+          description: "Accepted"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PostConversationEntryResponse"
+        default:
+          description: "Unsuccessful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+      description: "add conversation entries to the given conversation"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostConversationEntryRequest"
+      parameters:
+      - name: "Authorization"
+        schema:
+          type: "string"
+        description: "The access token generated to make requests to the Interaction Service APIs"
+        in: "header"
+        required: true
+        example: "Bearer XXXXXX"
+      - name: "OrgId"
+        schema:
+          type: "string"
+        description: "Organization Id used to verify the request against the auth token"
+        in: "header"
+        required: true
+        example: "00Dxxxxxxxxxxxx"
+      - name: "AuthorizationContext"
+        schema:
+          type: "string"
+        description: "Specify the extra info for request authorization"
+        in: "header"
+        required: true
+      - name: "AuthorizationContextType"
+        schema:
+          $ref: "#/components/schemas/AuthorizationContextType"
+        description: "request context"
+        in: "header"
+        required: true
+      - name: "RequestId"
+        schema:
+          type: "string"
+        description: "UUID that references this request"
+        in: "header"
+        required: true
+        example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
+    get:
+      summary: "Get the conversation entries for the given conversation identifier"
+      operationId: "get-conversation-entries"
+      responses:
+        default:
+          description: "Unsuccessful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        200:
+          description: "Operation succeeded"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetConversationEntriesResponse"
+      description: "Provides an end point get conversation entries in a conversation."
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GetConversationEntriesRequest"
+      parameters:
+      - name: "Authorization"
+        schema:
+          type: "string"
+        description: "The access token generated to make requests to the Interaction Service APIs"
+        in: "header"
+        required: true
+        example: "Bearer XXXXXX"
+      - name: "OrgId"
+        schema:
+          type: "string"
+        description: "Organization Id used to verify the request against the auth token"
+        in: "header"
+        required: true
+        example: "00Dxxxxxxxxxxxx"
+      - name: "AuthorizationContext"
+        schema:
+          type: "string"
+        description: "Specify the extra info for request authorization"
+        in: "header"
+        required: true
+      - name: "AuthorizationContextType"
+        schema:
+          $ref: "#/components/schemas/AuthorizationContextType"
+        description: "request context"
+        in: "header"
+        required: true
       - name: "RequestId"
         schema:
           type: "string"
