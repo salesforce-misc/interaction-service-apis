@@ -436,6 +436,39 @@ components:
       required:
       - "participant"
       - "joinedTime"
+    PostParticipantResponse:
+      type: object
+      description: "Response after performing actions on a conversation"
+      properties:
+        success:
+          type: boolean
+          description: Indicates whether the requested action was successfully performed
+        errorDetail:
+          $ref: '#/components/schemas/Error'
+      required:
+        - success
+    PostParticipantRequest:
+      description: 'Request to perform specified operation on a Participant for a Conversation'
+      type: object
+      properties:
+        conversationIdentifier:
+          type: string
+        participants:
+          type: array
+          items:
+            $ref: '#/components/schemas/Participant'
+          maxItems: 1
+          minItems: 1
+        operation:
+          $ref: '#/components/schemas/ParticipantOperationType'
+      required:
+        - conversationIdentifier
+        - participants
+        - operation
+    ParticipantOperationType:
+      type: string
+      enum:
+        - Remove
     TypingStartedIndicator:
       description: "A typing started indicator entry"
       allOf:
@@ -3340,6 +3373,58 @@ paths:
         in: "header"
         required: true
         example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
+  /participant:
+    post:
+      summary: Operations performed on Participant for a given conversation
+      operationId: post-participant
+      responses:
+        default:
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '200':
+          description: Operation succeeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostParticipantResponse'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostParticipantRequest'
+      parameters:
+        - in: header
+          name: Authorization
+          description: "The access token generated to make requests to the Interaction Service APIs"
+          example: Bearer XXXXXX
+          required: true
+          schema:
+            type: string
+        - name: OrgId
+          in: header
+          description: "Organization Id used to verify the request against the auth token"
+          example: 00Dxxxxxxxxxxxx
+          required: true
+          schema:
+            type: string
+        - name: AuthorizationContext
+          in: header
+          description: "Specify the extra info for request authorization"
+          example: Partner_ChannelDefinition
+          required: true
+          schema:
+            type: string
+        - name: RequestId
+          in: header
+          description: "UUID that references this request"
+          required: true
+          schema:
+            type: string
+          example: f7904eb6-5352-4c5e-adf6-5f100572cf5d
   /interactions:
     post:
       summary: "Create interactions"

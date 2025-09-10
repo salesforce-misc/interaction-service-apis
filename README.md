@@ -732,6 +732,33 @@ curl -v \
   }
 }" http://localhost:8085/api/v1/conversationHistory
 ```
+
+#### Remove Participant API
+This API allows partner to remove participants from a messaging session. Be sure to replace other placeholder values `<..>`
+
+```bash
+curl -v \
+-H "Authorization: Bearer <AccessToken>" \
+-H "Content-Type: application/json" \
+-H "OrgId: <OrgId>" \
+-H "AuthorizationContext: <AuthorizationContext>" \
+-H "RequestId: <RequestId>" \
+-X POST -d '{
+  "conversationIdentifier": "<ConversationIdentifier>",
+  "operation": "Remove",
+  "participants": [
+    {
+      "appType": "agent",
+      "subject": "<15-character SF userId>",
+      "role": "Agent"
+    }
+  ]
+}' "http://localhost:8085/api/v1/participant"
+```
+
+**Note:** The `participant` list supports a maximum of 1 participant. The array structure allows for future extensibility while maintaining backward compatibility.
+
+
 ## outbound-custom-event-payload.yaml
 The [outbound-custom-event-payload.yaml](outbound-custom-event-payload.yaml) shows the outbound message custom event schema. Following are examples of the custom event payload received in "data" listener of the custome event after subscribe the event by topic name "my__event__e" shown in payload below for outbound message.
 
