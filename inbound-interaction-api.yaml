@@ -973,6 +973,11 @@ components:
       description: "Payload for establishing conversation request"
       type: "object"
       properties:
+        routingAttributes:
+          type: "object"
+          description: "List of Key value pairs defining the channel variable name mapped to the value"
+          additionalProperties:
+            type: "string"
         channelAddressIdentifier:
           type: "string"
           description: "Conversation channel address identifier"
@@ -2221,6 +2226,8 @@ components:
       description: "PostConversation response including conversation identifier"
       properties:
         conversationIdentifier:
+          type: "string"
+        messagingSessionId:
           type: "string"
         success:
           type: "boolean"

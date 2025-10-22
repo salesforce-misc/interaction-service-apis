@@ -452,7 +452,7 @@ Note: Only maximum of 25 acknowledgments are supported per request
 
 #### Conversation API
 
-Example request for establishing a conversation, be sure to replace placeholder values `<..>`
+Example request for establishing a conversation, be sure to replace placeholder values `<..>` routing attributes being optional.
 
 ```bash
 curl -v \
@@ -462,6 +462,10 @@ curl -v \
 -H "AuthorizationContext: <AuthorizationContext>" \
 -H "RequestId: <RequestId>" \
 -X POST -d '{
+  "routingAttributes": {
+    "customVariable1": "customValue1",
+    "customVariable2": "customValue2"
+  },
   "channelAddressIdentifier": "<channelAddressIdentifier>",
   "participants": [
     {
