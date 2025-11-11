@@ -385,7 +385,7 @@ components:
         conversationEntries:
           minItems: 1
           description: "list of messages sent in the conversation"
-          maxItems: 5
+          maxItems: 25
           type: "array"
           items:
             $ref: "#/components/schemas/ConversationEntryHistory"
