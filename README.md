@@ -369,7 +369,7 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H 'AuthorizationContext: <Aut
 
 The API allows to register different capabilities to support messaging components
 Example request for registering capability, be sure to replace placeholder values `<..>`
-You need to register for the messageType and formatType which your integration supports
+You must register for the `messageTypeCapabilities` that your integration supports. The `progressIndicatorTypeCapabilities` field is optional and can be included to register support for progress indicators.
 
 ```bash
 curl -v \
@@ -421,6 +421,16 @@ curl -v \
                             {
                                 "formatType": "Inputs"
                             }
+                        ]
+                    }
+                ],
+                "progressIndicatorTypeCapabilities": [
+                    {
+                        "progressIndicatorType": "ProgressUpdateIndicator",
+                        "formatTypeCapabilities": [
+                           {
+                               "formatType": "Text"
+                           }
                         ]
                     }
                 ]
