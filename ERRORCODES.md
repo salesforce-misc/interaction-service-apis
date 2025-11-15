@@ -94,7 +94,8 @@
 | 10094 | The request failed due to a timeout from a downstream service. Please try again later.|
 | 10095 | The MIME type of the uploaded file cannot be determined. Please check the file and try again.|
 | 10096 | The channel variable value length in routing attribute payload is larger than the maximum length configured in Messaging Channel setup page.|
-| 10097 | Invalid operation. Please provide a valid operation for Participant API.
+| 10097 | Invalid operation. Please provide a valid operation for Participant API.|
+| 10098 | The progressIndicatorCapability parameter can't be empty. Please provide a valid value or remove the parameter from the payload and try again.
 ## Service Errors
 | Error Code | Description |
 |--|--|
