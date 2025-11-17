@@ -496,6 +496,11 @@ components:
           type: "array"
           items:
             $ref: "#/components/schemas/MessageTypeCapabilities"
+        progressIndicatorTypeCapabilities:
+          type: "array"
+          description: "Progress Indicator Types capabilities."
+          items:
+            $ref: "#/components/schemas/ProgressIndicatorTypeCapabilities"
       required:
       - "messageTypeCapabilities"
     RoutingInfo:
@@ -1331,6 +1336,11 @@ components:
             type: "boolean"
         required:
         - "input"
+    ProgressIndicatorType:
+      type: "string"
+      description: "The type of progress indicator"
+      enum:
+        - "ProgressUpdateIndicator"
     StaticContentAttachments:
       description: "Attachments with optional text"
       allOf:
@@ -2745,6 +2755,21 @@ components:
       required:
       - "messageType"
       - "formatTypeCapabilities"
+    ProgressIndicatorTypeCapabilities:
+      description: "Progress Indicator Type capabilities."
+      type: "object"
+      properties:
+        formatTypeCapabilities:
+          type: "array"
+          description: "The list of Format Types supported for this progress indicator type. Required."
+          items:
+            $ref: "#/components/schemas/FormatTypeCapabilities"
+        progressIndicatorType:
+          description: "The list of supported progress indicator types. Required."
+          $ref: "#/components/schemas/ProgressIndicatorType"
+      required:
+        - "progressIndicatorType"
+        - "formatTypeCapabilities"
     AbstractTitleItem:
       type: "object"
       properties:
