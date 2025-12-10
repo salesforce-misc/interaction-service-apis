@@ -95,6 +95,7 @@
 | 10095 | The MIME type of the uploaded file cannot be determined. Please check the file and try again.|
 | 10096 | The channel variable value length in routing attribute payload is larger than the maximum length configured in Messaging Channel setup page.|
 | 10097 | Invalid operation. Please provide a valid operation for Participant API.|
+| 10098 | The progressIndicatorCapability parameter can't be empty. Please provide a valid value or remove the parameter from the payload and try again.
 | 15102 | To use this API, enable Contact Center as a Service.|
 | 15103 | The Messaging End User is not Fully Opted In|
 | 15104 | Messaging channel is not linked to any Contact Center|
