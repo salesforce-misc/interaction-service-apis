@@ -94,17 +94,7 @@
 | 10094 | The request failed due to a timeout from a downstream service. Please try again later.|
 | 10095 | The MIME type of the uploaded file cannot be determined. Please check the file and try again.|
 | 10096 | The channel variable value length in routing attribute payload is larger than the maximum length configured in Messaging Channel setup page.|
-| 10097 | Invalid operation. Please provide a valid operation for Participant API.
-## Service Errors
-| Error Code | Description |
-|--|--|
-| 20002 | An error occured when retrieve conversation list based on endUserAddress.|
-| 20003 | Empty interaction list in request.|
-| 20004 | Pod not found error occurred when fetch Org perms.|
-
-## AgentWork POST API Client Error
-| Error Code | Description |
-|--|--|
+| 10097 | Invalid operation. Please provide a valid operation for Participant API.|
 | 15102 | To use this API, enable Contact Center as a Service.|
 | 15103 | The Messaging End User is not Fully Opted In|
 | 15104 | Messaging channel is not linked to any Contact Center|
@@ -116,9 +106,12 @@
 | 15110 | Enter a valid workItemId \<workItemId\> for the MessagingSession ID.|
 | 15111 | WorkItemId \<workItemId\> for the MessagingSession ID not found.|
 | 15112 | The agent's status is not associated with the channel for this work.|
-## AgentWork POST API Service Error
+## Service Errors
 | Error Code | Description |
 |--|--|
+| 20002 | An error occured when retrieve conversation list based on endUserAddress.|
+| 20003 | Empty interaction list in request.|
+| 20004 | Pod not found error occurred when fetch Org perms.|
 | 25005 | We couldn't find the Messaging End User for workItemId \<workItemId\>. Verify that the Messaging Session exists, then try again.|
 | 25006 | We couldn't find the conversation for workItemId \<workItemId\>. Verify that the conversation exists, then try again.|
 | 25007 | We couldn't find conversationId for workItemId \<workItemId\>. Verify that the conversation exists, then try again.|
