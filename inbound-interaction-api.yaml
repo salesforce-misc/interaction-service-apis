@@ -3083,6 +3083,68 @@ components:
               $ref: "#/components/schemas/Url"
           required:
             - "url"
+    PostMessagingSessionResponse:
+      type: object
+      description: "Response after performing action on MessagingSession"
+      properties:
+        success:
+          type: boolean
+          description: Indicates whether the requested action was successfully performed
+        errorReason:
+          $ref: '#/components/schemas/MessagingSessionOperationErrorReason'
+      required:
+        - success
+    PostMessagingSessionRequest:
+      description: 'Request to perform action on MessagingSession'
+      type: object
+      properties:
+        channelAddressIdentifier:
+          type: string
+          description: The Channel Address Identifier
+        endUserClientId:
+          type: string
+          description: The EndUser Client Id
+        conversationIdentifier:
+          type: string
+          description: Unique conversation identifier of the conversation
+        sessionId:
+          type: string
+          description: The Messaging Session ID
+        operation:
+          $ref: '#/components/schemas/MessagingSessionOperationType'
+        operationBy:
+          $ref: '#/components/schemas/MessagingSessionOperationByType'
+      required:
+        - channelAddressIdentifier
+        - conversationIdentifier
+        - endUserClientId
+        - operation
+    MessagingSessionOperationType:
+      type: string
+      enum:
+        - End
+        - Inactivate
+    MessagingSessionOperationByType:
+      type: string
+      enum:
+        - EndUser
+        - System
+    MessagingSessionOperationErrorReason:
+      type: string
+      enum:
+        - ACTIVE_CONVERSATION_NOT_FOUND
+        - END_SESSION_FAILED
+        - INTERNAL_ERROR
+        - PERMISSION_DENIED
+        - CHANNEL_ADDRESS_NOT_FOUND
+        - SESSION_NOT_FOUND
+        - END_USER_NOT_FOUND
+        - ORG_NOT_FOUND
+        - CONVERSATION_PRECONDITION_FAILED
+        - CONVERSATION_PROCESSING_ABORTED
+        - CHANNEL_ADDRESS_IS_INACTIVE
+        - CUSTOMER_ERROR
+        - NO_ACCESS
 servers:
 - url: "/api/v1/"
 openapi: "3.0.0"
@@ -3834,6 +3896,58 @@ paths:
         in: "header"
         required: true
         example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
+  /messagingSession:
+    post:
+      summary: Perform action on MessagingSession
+      operationId: post-messaging-session
+      responses:
+        default:
+          description: Unsuccessful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '200':
+          description: Operation succeeded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostMessagingSessionResponse'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PostMessagingSessionRequest'
+      parameters:
+        - in: header
+          name: Authorization
+          description: "The access token generated to make requests to the Interaction Service APIs"
+          example: Bearer XXXXXX
+          required: true
+          schema:
+            type: string
+        - name: OrgId
+          in: header
+          description: "Organization Id used to verify the request against the auth token"
+          example: 00Dxxxxxxxxxxxx
+          required: true
+          schema:
+            type: string
+        - name: AuthorizationContext
+          in: header
+          description: "Specify the extra info for request authorization"
+          example: Partner_ChannelDefinition
+          required: true
+          schema:
+            type: string
+        - name: RequestId
+          in: header
+          description: "UUID that references this request"
+          required: true
+          schema:
+            type: string
+            example: f7904eb6-5352-4c5e-adf6-5f100572cf5d
 info:
   title: "Interaction"
   version: "0.0.1"
