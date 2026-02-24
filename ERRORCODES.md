@@ -71,7 +71,7 @@
 | 10068      | Invalid participant. The message isn't from an approved participant.                                                                                                       |
 | 10069      | Specify a valid channel address identifier or check your authorization configuration.                                                                                      |
 | 10070      | Provide a channel address identifier that's configured with the specified authorization context.                                                                           |
-| 10071      | Specify a valid session ID.                                                                                                                                                |
+| 10071      | Session is not found.                                                                                                                                                      |
 | 10072      | Specify a valid session ID.                                                                                                                                                |
 | 10073      | Invalid message ID. Provide a unique ID for each message entry.                                                                                                            |
 | 10074      | Invalid message timestamp. The message Timestamp must occur while the sender is in the conversation.                                                                       |

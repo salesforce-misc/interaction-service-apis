@@ -806,7 +806,7 @@ curl -v \
 -X POST -d '{
   "channelAddressIdentifier": "<channelAddressIdentifier>",
   "endUserClientId": "<endUserClientId>",
-  "sessionId" : "<messagingSessionId>",
+  "sessionId": "<messagingSessionId>",
   "conversationIdentifier": "<conversationIdentifier>",
   "operation": "Inactivate",
   "operationBy": "<EndUser / System>"
