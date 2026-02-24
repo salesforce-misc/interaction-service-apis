@@ -772,6 +772,48 @@ curl -v \
 
 **Note:** The `participant` list supports a maximum of 1 participant. The array structure allows for future extensibility while maintaining backward compatibility.
 
+#### MessagingSession API
+
+This API Allows partner to End or Inactivate a Messaging Session. Partner can optionally specify who ended / inactivated the session. Be sure to replace other placeholder values `<..>`
+
+To end a session, use the following request:
+
+```bash
+curl -v \
+-H "Authorization: Bearer <AccessToken>" \
+-H "Content-Type: application/json" \
+-H "OrgId: <OrgId>" \
+-H "AuthorizationContext: <AuthorizationContext>" \
+-H "RequestId: <RequestId>" \
+-X POST -d '{
+  "channelAddressIdentifier": "<channelAddressIdentifier>",
+  "endUserClientId": "<endUserClientId>",
+  "conversationIdentifier": "<ConversationIdentifier>",
+  "operation": "End",
+  "operationBy": "<EndUser / System>"
+}' "http://localhost:8085/api/v1/messagingSession"
+```
+
+To inactivate a session, use the following request:
+
+```bash
+curl -v \
+-H "Authorization: Bearer <AccessToken>" \
+-H "Content-Type: application/json" \
+-H "OrgId: <OrgId>" \
+-H "AuthorizationContext: <AuthorizationContext>" \
+-H "RequestId: <RequestId>" \
+-X POST -d '{
+  "channelAddressIdentifier": "<channelAddressIdentifier>",
+  "endUserClientId": "<endUserClientId>",
+  "sessionId" : "<messagingSessionId>",
+  "conversationIdentifier": "<conversationIdentifier>",
+  "operation": "Inactivate",
+  "operationBy": "<EndUser / System>"
+}' "http://localhost:8085/api/v1/messagingSession"
+```
+**Note:** Messaging Session ID is not required for End operation.
+
 
 ## outbound-custom-event-payload.yaml
 The [outbound-custom-event-payload.yaml](outbound-custom-event-payload.yaml) shows the outbound message custom event schema. Following are examples of the custom event payload received in "data" listener of the custome event after subscribe the event by topic name "my__event__e" shown in payload below for outbound message.
