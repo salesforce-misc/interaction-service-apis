@@ -710,49 +710,6 @@ components:
     MessageDefinitionNameOrId:
       type: "string"
       description: "A reference to a message definition by unique name or id"
-    RoutingWorkResult:
-      description: "Result of routing work"
-      allOf:
-        - $ref: "#/components/schemas/AbstractEntry"
-        - type: "object"
-          properties:
-            queueId:
-              type: "string"
-              description: "Queue assigned work"
-            errorMessages:
-              type: "array"
-              description: "Error occurred while routing the work"
-              items:
-                type: "string"
-            workTargetId:
-              type: "string"
-              description: "Routing target associated with this record (e.g.: MessagingSession)"
-            agentSessionId:
-              type: "string"
-              description: "Assigned Agent Id"
-            routingType:
-              description: "Routing Type"
-              $ref: "#/components/schemas/RoutingType"
-            workType:
-              description: "Work event type"
-              $ref: "#/components/schemas/RoutingWorkType"
-            botId:
-              type: "string"
-              description: "Bot assigned work"
-            agentGroupIds:
-              type: "array"
-              description: "GroupId for the assigned agent"
-              items:
-                type: "string"
-            workId:
-              type: "string"
-              description: "Work SFDC record ID"
-          required:
-            - "conversationId"
-            - "workId"
-            - "workTargetId"
-            - "workType"
-            - "errorMessages"
     RoutingResult:
       description: "Result of conversation routing if either successful or failure"
       allOf:
