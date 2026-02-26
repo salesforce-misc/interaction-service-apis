@@ -1,61 +1,5 @@
 components:
   schemas:
-    AbstractChoicesResponse:
-      type: "object"
-      properties:
-        formatType:
-          $ref: "#/components/schemas/FormatType"
-      required:
-        - "formatType"
-      discriminator:
-        propertyName: "formatType"
-        mapping:
-          Selections: "#/components/schemas/ChoicesResponseSelections"
-    DimensionType:
-      type: "string"
-      description: "If specified indicates how the dimension field should be interpreted."
-      enum:
-        - "PIXEL"
-        - "RATIO"
-    SelectInput:
-      description: "A single or multiple select input"
-      allOf:
-        - $ref: "#/components/schemas/AbstractInput"
-        - type: "object"
-          properties:
-            multipleSelection:
-              type: "boolean"
-            optionItems:
-              type: "array"
-              minItems: 1
-              items:
-                $ref: "#/components/schemas/TitleOptionItem"
-          required:
-            - "optionItems"
-    ParticipantChangedOperation:
-      type: "string"
-      description: "set of participant changed operation"
-      enum:
-        - "add"
-        - "remove"
-        - "update"
-    ChoicesButtons:
-      description: "Choices with button options"
-      allOf:
-        - $ref: "#/components/schemas/AbstractChoices"
-        - type: "object"
-          properties:
-            text:
-              type: "string"
-            optionItems:
-              minItems: 1
-              description: "Items must be of type TitleOptionItem."
-              type: "array"
-              items:
-                $ref: "#/components/schemas/TitleOptionItem"
-          required:
-            - "text"
-            - "optionItems"
     DocumentAsset:
       description: "A document asset of a message."
       allOf:
@@ -70,43 +14,6 @@ components:
         - "sectionType"
       discriminator:
         propertyName: "sectionType"
-    FormInputs:
-      description: "A form with inputs"
-      allOf:
-        - $ref: "#/components/schemas/AbstractForm"
-        - type: "object"
-          properties:
-            formTitle:
-              $ref: "#/components/schemas/AbstractTitleItem"
-            introScreen:
-              $ref: "#/components/schemas/AbstractFormIntroScreen"
-            images:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/ImageAsset"
-            message:
-              $ref: "#/components/schemas/AbstractTitleItem"
-            reply:
-              $ref: "#/components/schemas/AbstractTitleItem"
-            sections:
-              type: "array"
-              minItems: 1
-              items:
-                $ref: "#/components/schemas/AbstractInputSection"
-          required:
-            - "formTitle"
-            - "sections"
-    FieldRestrictionType:
-      type: "string"
-      description: "The set field indicated the restriction type for this FieldRestriction."
-      enum:
-        - "StringFieldRestriction"
-        - "MimeTypeRestriction"
-        - "FileSizeRestriction"
-        - "DimensionRestriction"
-        - "ArrayRestriction"
-        - "RequiredFieldRestriction"
-        - "TypeRestriction"
     StaticContentRichLink:
       description: "Static content as a rich link"
       allOf:
@@ -123,39 +30,17 @@ components:
               $ref: "#/components/schemas/TitleLinkItem"
           required:
             - "linkItem"
-    BooleanValue:
-      description: "A boolean value"
-      allOf:
-        - $ref: "#/components/schemas/AbstractValue"
-        - type: "object"
-          properties:
-            booleanValue:
-              type: "boolean"
-          required:
-            - "booleanValue"
-    AbstractAsset:
-      description: "The base type of an asset from which concrete asset types extends."
-      type: "object"
-      properties:
-        description:
-          type: "string"
-        id:
-          $ref: "#/components/schemas/UniqueId"
-        mimeType:
-          $ref: "#/components/schemas/MimeType"
-        assetUrl:
-          $ref: "#/components/schemas/Url"
-        referenceId:
-          $ref: "#/components/schemas/UniqueId"
-        assetType:
-          $ref: "#/components/schemas/AssetType"
-      required:
-        - "id"
-        - "assetType"
-        - "mimeType"
-        - "assetUrl"
-      discriminator:
-        propertyName: "assetType"
+    RoutingWorkType:
+      type: "string"
+      description: "work event type"
+      enum:
+        - "Assigned"
+        - "Accepted"
+        - "Cancelled"
+        - "Closed"
+        - "Declined"
+        - "TransferError"
+        - "Transferred"
     FormResponseInputs:
       description: "The input response values to a Form Message"
       allOf:
@@ -170,20 +55,6 @@ components:
                 $ref: "#/components/schemas/AbstractInputValue"
           required:
             - "inputValues"
-    AbstractInputValue:
-      type: "object"
-      properties:
-        inputValueType:
-          $ref: "#/components/schemas/InputValueType"
-        inputId:
-          $ref: "#/components/schemas/InputId"
-        inputlabel:
-          $ref: "#/components/schemas/AbstractTitleItem"
-      required:
-        - "inputValueType"
-        - "inputId"
-      discriminator:
-        propertyName: "inputValueType"
     TextInput:
       description: "A text input"
       allOf:
@@ -204,16 +75,7 @@ components:
               $ref: "#/components/schemas/TextInputContentType"
             placeholder:
               type: "string"
-    UrlValue:
-      description: "An url value"
-      allOf:
-        - $ref: "#/components/schemas/AbstractValue"
-        - type: "object"
-          properties:
-            urlValue:
-              $ref: "#/components/schemas/Url"
-          required:
-            - "urlValue"
+              description: "Placeholder text for the input"
     ChoicesListPicker:
       description: "Choices as a list picker"
       allOf:
@@ -238,40 +100,21 @@ components:
           required:
             - "title"
             - "optionItems"
+    UrlValue:
+      description: "A url value"
+      allOf:
+        - $ref: "#/components/schemas/AbstractValue"
+        - type: "object"
+          properties:
+            urlValue:
+              $ref: "#/components/schemas/Url"
+          required:
+            - "urlValue"
     InputValueType:
       type: "string"
       enum:
         - "SingleInputValue"
         - "SelectedOptionsInputValue"
-    ChoicesMessage:
-      description: "MT message with choices"
-      allOf:
-        - $ref: "#/components/schemas/AbstractMessage"
-        - type: "object"
-          properties:
-            choices:
-              $ref: "#/components/schemas/AbstractChoices"
-          required:
-            - "choices"
-    DimensionRestriction:
-      description: "Dimension restrictions for the message field."
-      allOf:
-        - $ref: "#/components/schemas/AbstractFieldRestriction"
-        - type: "object"
-          properties:
-            x:
-              type: "float"
-              description: "The x dimension limits for the media. Required."
-            "y":
-              type: "float"
-              description: "The y dimension limits for the media. Required."
-            dimensionType:
-              description: "Indicates how the dimension field should be interpreted. Required."
-              $ref: "#/components/schemas/DimensionType"
-          required:
-            - "dimensionType"
-            - "x"
-            - "y"
     ExternalApplication:
       description: "A link to an external application e.g imessage app."
       allOf:
@@ -294,16 +137,45 @@ components:
             useLiveLayout:
               type: "boolean"
               description: "Apple imessage live layout"
+    DimensionRestriction:
+      description: "Dimension restrictions for the message field."
+      allOf:
+        - $ref: "#/components/schemas/AbstractFieldRestriction"
+        - type: "object"
+          properties:
+            x:
+              type: "float"
+              description: "The x dimension limits for the media. Required."
+            "y":
+              type: "float"
+              description: "The y dimension limits for the media. Required."
+            dimensionType:
+              description: "Indicates how the dimension field should be interpreted. Required."
+              $ref: "#/components/schemas/DimensionType"
+          required:
+            - "dimensionType"
+            - "x"
+            - "y"
     AbstractMessage:
       description: "Base definition for all message types"
       type: "object"
       properties:
-        messageType:
-          $ref: "#/components/schemas/MessageType"
         inReplyToMessageId:
           $ref: "#/components/schemas/InReplyToMessageId"
+        customHandlingType:
+          $ref: "#/components/schemas/CustomHandlingType"
         id:
           $ref: "#/components/schemas/MessageId"
+        messageType:
+          $ref: "#/components/schemas/MessageType"
+        references:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/RecordReference"
+        contentCategory:
+          $ref: "#/components/schemas/MessageContentCategory"
+          description: "The category of the message"
+          example: "PromotionalOutreach"
       required:
         - "id"
         - "messageType"
@@ -315,23 +187,12 @@ components:
           FormMessage: "#/components/schemas/FormMessage"
           ChoicesMessage: "#/components/schemas/ChoicesMessage"
           FormResponseMessage: "#/components/schemas/FormResponseMessage"
-    SingleInputValue:
-      description: "Single value of an input"
-      allOf:
-        - $ref: "#/components/schemas/AbstractInputValue"
-        - type: "object"
-          properties:
-            displayValue:
-              type: "string"
-            value:
-              $ref: "#/components/schemas/AbstractValue"
-          required:
-            - "value"
     CustomIntegrationType:
       type: "string"
       description: "Type of custom Integration"
       enum:
         - "CustomChannelIntegration"
+        - "CustomBotIntegration"
     TypingStartedIndicator:
       description: "A typing started indicator entry"
       allOf:
@@ -343,71 +204,6 @@ components:
               format: "int64"
           required:
             - "timestamp"
-    ChannelCapabilities:
-      description: "A set of message type capabilities for a channel."
-      type: "object"
-      properties:
-        channelType:
-          description: "Channel type. Optional."
-          $ref: "#/components/schemas/ChannelType"
-        customIntegration:
-          description: "Custom Integration. Optional"
-          $ref: "#/components/schemas/AbstractCustomIntegration"
-        messageTypeCapabilities:
-          minItems: 1
-          description: "Message Type capabilities."
-          type: "array"
-          items:
-            $ref: "#/components/schemas/MessageTypeCapabilities"
-      required:
-        - "messageTypeCapabilities"
-    ChoicesCarousel:
-      description: "Choices as a carousel with options"
-      allOf:
-        - $ref: "#/components/schemas/AbstractChoices"
-        - type: "object"
-          properties:
-            items:
-              minItems: 1
-              description: "Items must must contain more then one TitleOptionItem for the choice options."
-              type: "array"
-              items:
-                $ref: "#/components/schemas/TitleItemWithInteractions"
-            images:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/ImageAsset"
-          required:
-            - "items"
-    ErrorAttachmentUploadResult:
-      description: "Attachment upload that failed"
-      allOf:
-        - $ref: "#/components/schemas/AbstractAttachmentUploadResult"
-        - type: "object"
-          properties:
-            errorMessage:
-              type: "string"
-              description: "A non localized message. Do not use for display in UI."
-            errorType:
-              description: "The type of error. To be used for displaying a localized error message in UI"
-              $ref: "#/components/schemas/AttachmentUploadErrorType"
-          required:
-            - "errorType"
-    UniqueIdentifier:
-      type: "string"
-      description: "An string identifier that identifies objects or items uniquely per message instance"
-      example: "7c4cce61-df7a-4a5b-a949-3d6e3ea278b5"
-    SelectedOption:
-      description: "A selection option from a ChoicesSelectionsMessage"
-      additionalProperties: false
-      type: "object"
-      properties:
-        optionTitle:
-          $ref: "#/components/schemas/AbstractTitleItem"
-        optionIdentifier:
-          $ref: "#/components/schemas/UniqueIdentifier"
-      required:
-        - "optionIdentifier"
     Participant:
       description: "A Participant"
       type: "object"
@@ -425,25 +221,16 @@ components:
         - "appType"
         - "subject"
         - "role"
-    InputType:
-      type: "string"
-      enum:
-        - "SelectInput"
-        - "SelectNavigationInput"
-        - "OptionPickerInput"
-        - "DatePickerInput"
-        - "DateTimePickerInput"
-        - "TextInput"
-    TextValue:
-      description: "A text value"
+    Note:
+      description: "A note entry (for private whisper messages)"
       allOf:
-        - $ref: "#/components/schemas/AbstractValue"
+        - $ref: "#/components/schemas/AbstractEntry"
         - type: "object"
           properties:
-            textValue:
-              type: "string"
+            abstractMessage:
+              $ref: "#/components/schemas/AbstractMessage"
           required:
-            - "textValue"
+            - "abstractMessage"
     TitleImageItem:
       allOf:
         - $ref: "#/components/schemas/AbstractTitleItem"
@@ -475,14 +262,6 @@ components:
           required:
             - "text"
             - "optionItems"
-    AppType:
-      type: "string"
-      description: "Enum listing unique identifiers for app services."
-      enum:
-        - "custom"
-        - "chatbot"
-        - "agent"
-        - "conversation"
     Link:
       description: "A web link."
       type: "object"
@@ -517,16 +296,6 @@ components:
       type: "string"
       enum:
         - "SingleInputSection"
-    AssetReferenceValue:
-      description: "An asset reference value. Assets can be image, audio, video, document."
-      allOf:
-        - $ref: "#/components/schemas/AbstractValue"
-        - type: "object"
-          properties:
-            assetReferenceId:
-              $ref: "#/components/schemas/UniqueId"
-          required:
-            - "assetReferenceId"
     CapabilityFieldRestriction:
       description: "A list of restrictions on the fields on the message format type."
       type: "object"
@@ -552,51 +321,22 @@ components:
       required:
         - "name"
         - "value"
-    TitleItem:
+    StructuredValue:
+      description: "A value containing an arbitrary JSON object"
       allOf:
-        - $ref: "#/components/schemas/AbstractTitleItem"
-    ParticipantChanged:
-      description: "A participant changed entry"
-      allOf:
-        - $ref: "#/components/schemas/AbstractEntry"
+        - $ref: "#/components/schemas/AbstractValue"
         - type: "object"
           properties:
-            entries:
-              type: "array"
-              items:
-                type: "object"
-                properties:
-                  operation:
-                    $ref: "#/components/schemas/ParticipantChangedOperation"
-                  menuMetadata:
-                    $ref: "#/components/schemas/ParticipantChangedClientMenuMetadata"
-                  participant:
-                    $ref: "#/components/schemas/Participant"
-                  displayName:
-                    type: "string"
+            value:
+              type: "object"
+              description: "A value representing an object"
           required:
-            - "participant"
-    MessageReason:
-      type: "string"
-      description: "Enum listing unique and specific reason a message was sent."
-      enum:
-        - "AutomatedResponse"
-        - "Consent"
-    Url:
-      type: "string"
-      description: "A url"
-    MimeType:
-      type: "string"
-      description: "A mime type"
-    AttachmentUploadErrorType:
+            - "value"
+    FormResultType:
       type: "string"
       enum:
-        - "StorageLimitExceeded"
-        - "AttachmentTooLarge"
-        - "AttachmentNotFound"
-        - "AttachmentUploadNotEnabled"
-        - "AttachmentUploadNotAllowed"
-        - "InternalServerError"
+        - "FormRecordsResult"
+        - "FormErrorResult"
     DateValue:
       description: "A date value as defined by rfc3339"
       allOf:
@@ -608,10 +348,18 @@ components:
               format: "date"
           required:
             - "dateValue"
-    EntryId:
-      type: "string"
-      description: "UUID that references this entry"
-      example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
+    OptionValue:
+      description: "A value that presents an option of a choice or a form"
+      additionalProperties: false
+      type: "object"
+      properties:
+        value:
+          $ref: "#/components/schemas/AbstractValue"
+        optionIdentifier:
+          $ref: "#/components/schemas/UniqueIdentifier"
+      required:
+        - "optionIdentifier"
+        - "value"
     CalendarEventItemType:
       type: "string"
       description: "The type of a calendar event"
@@ -630,16 +378,6 @@ components:
           properties:
             queueId:
               type: "string"
-    FormMessage:
-      description: "MT Form message"
-      allOf:
-        - $ref: "#/components/schemas/AbstractMessage"
-        - type: "object"
-          properties:
-            form:
-              $ref: "#/components/schemas/AbstractForm"
-          required:
-            - "form"
     AbstractCalendarEventItem:
       description: "The base type for calendar events"
       type: "object"
@@ -661,36 +399,21 @@ components:
         - "title"
       discriminator:
         propertyName: "itemType"
-    CompositeValue:
-      description: "A composite value that contains a collection of named values"
-      allOf:
-        - $ref: "#/components/schemas/AbstractValue"
-        - type: "object"
-          properties:
-            items:
-              type: "array"
-              minItems: 1
-              items:
-                $ref: "#/components/schemas/NamedValue"
-          required:
-            - "items"
-    ImageAsset:
-      description: "An image asset of a message."
-      allOf:
-        - $ref: "#/components/schemas/AbstractAsset"
-    RoutingType:
-      type: "string"
-      description: "Routing type - sent in routing related events as well as in the RoutingContext"
-      enum:
-        - "Initial"
-        - "Transfer"
-        - "Conference"
     AttachmentUploadResultType:
       type: "string"
       enum:
         - "CompletedAttachmentUploadResult"
         - "PendingAttachmentUploadResult"
         - "ErrorAttachmentUploadResult"
+    AbstractFormResult:
+      type: "object"
+      properties:
+        resultType:
+          $ref: "#/components/schemas/FormResultType"
+      required:
+        - "resultType"
+      discriminator:
+        propertyName: "resultType"
     SkillInfo:
       type: "object"
       properties:
@@ -704,6 +427,36 @@ components:
           type: "string"
         level:
           type: "integer"
+    StaticContentExperienceType:
+      description: "A uni-directional Experience Type Message"
+      allOf:
+        - $ref: "#/components/schemas/AbstractStaticContent"
+        - type: "object"
+          properties:
+            message:
+              type: "string"
+            values:
+              type: "array"
+              minItems: 1
+              items:
+                $ref: "#/components/schemas/ExperienceTypeValue"
+          required:
+            - "values"
+    FormError:
+      type: "object"
+      properties:
+        errorMessage:
+          type: "string"
+          description: "A non localized message. Do not use for display in UI."
+        errorCode:
+          type: "string"
+          description: "A Salesforce API Error code. Can be used for displaying a localized error in UI"
+        errorType:
+          description: "The type of error to be used for displaying a localized error message in UI"
+          $ref: "#/components/schemas/FormErrorType"
+      required:
+        - "errorType"
+        - "errorMessage"
     FormResponseMessage:
       description: "MO Form response message"
       allOf:
@@ -728,40 +481,14 @@ components:
       required:
         - "titleItem"
         - "interactionItems"
-    Text:
+    SelectionDisplay:
       type: "string"
-      description: "Text content"
-    FormatTypeCapabilities:
-      description: "A Format Type capabilities."
-      type: "object"
-      properties:
-        formatType:
-          description: "The name of the format type. Required."
-          $ref: "#/components/schemas/FormatType"
-        capabilityFieldRestriction:
-          type: "array"
-          description: "field restrictions."
-          items:
-            $ref: "#/components/schemas/CapabilityFieldRestriction"
-      required:
-        - "formatType"
-    TimeSlotItemType:
-      type: "string"
-      description: "The type of a time slot item."
+      description: "Display style for selection options"
       enum:
-        - "TimeSlotOptionItem"
-    FileSizeRestriction:
-      description: "File size restrictions for the message field."
-      allOf:
-        - $ref: "#/components/schemas/AbstractFieldRestriction"
-        - type: "object"
-          properties:
-            maxSizeInKb:
-              type: "integer"
-              format: "int64"
-              description: "The max file size in kilobytes. Required."
-          required:
-            - "maxSizeInKb"
+        - "Dropdown"
+        - "RadioButtons"
+        - "Checkboxes"
+        - "ChipsSelector"
     StaticContentMedia:
       description: "Image or video media with optional links"
       allOf:
@@ -776,34 +503,30 @@ components:
                 $ref: "#/components/schemas/TitleLinkItem"
           required:
             - "mediaAsset"
-    CustomChannelIntegration:
-      description: "Custom channel integration"
-      allOf:
-        - $ref: "#/components/schemas/AbstractCustomIntegration"
-        - type: "object"
-          properties:
-            integrationNamespace:
-              type: "string"
-              description: "Integration Namespace represents developer namespace if that exist or in case when it does not exist it can be orgId"
-              maxLength: 240
-            conversationChannelDefinitionDevName:
-              type: "string"
-              description: "Developer name of conversation channel definition"
-              maxLength: 240
-          required:
-            - "conversationChannelDefinitionDevName"
-            - "integrationNamespace"
     EntryType:
       type: "string"
       description: "Enum listing unique identifiers types of entries."
       enum:
         - "Message"
         - "MessageDeliveryFailed"
+        - "RoutingWorkResult"
+        - "ParticipantChanged"
+        - "RoutingResult"
+        - "Note"
+        - "FlagRaise"
+        - "FlagLower"
+        - "EndUserConsentUpdated"
+        - "SessionStatusChanged"
+        - "ConsultConversationInfo"
+        - "MessageUpdated"
+        - "TransferProgress"
+        - "ParticipantsConferenced"
         - "TypingStartedIndicator"
         - "TypingStoppedIndicator"
-        - "ParticipantChanged"
-        - "MessageUpdated"
-        - "RoutingResult"
+        - "DeliveryAcknowledgement"
+        - "ReadAcknowledgement"
+        - "ProgressIndicator"
+        - "QueuePosition"
     StaticContentWebView:
       description: "A single web page with parameters. One use case is a post-chat survey."
       allOf:
@@ -847,44 +570,6 @@ components:
               type: "boolean"
           required:
             - "input"
-    StaticContentAttachments:
-      description: "Attachments with optional text"
-      allOf:
-        - $ref: "#/components/schemas/AbstractStaticContent"
-        - type: "object"
-          properties:
-            text:
-              $ref: "#/components/schemas/Text"
-            attachments:
-              type: "array"
-              minItems: 1
-              items:
-                $ref: "#/components/schemas/Attachment"
-          required:
-            - "attachments"
-    AbstractChoices:
-      type: "object"
-      properties:
-        formatType:
-          $ref: "#/components/schemas/FormatType"
-      required:
-        - "formatType"
-      discriminator:
-        propertyName: "formatType"
-        mapping:
-          TimePicker: "#/components/schemas/ChoicesTimePicker"
-          Buttons: "#/components/schemas/ChoicesButtons"
-          Carousel: "#/components/schemas/ChoicesCarousel"
-          QuickReplies: "#/components/schemas/ChoicesQuickReplies"
-          ListPicker: "#/components/schemas/ChoicesListPicker"
-    AgentRoutingConfigDetails:
-      description: "Agent routing based configuration details."
-      allOf:
-        - $ref: "#/components/schemas/RoutingConfigurationDetails"
-        - type: "object"
-          properties:
-            agentId:
-              type: "string"
     RoutingRequested:
       type: "object"
       properties:
@@ -898,50 +583,29 @@ components:
         - "channelAddressIdentifier"
         - "recipient"
         - "payload"
-    ChannelType:
-      description: "Channel type."
-      enum:
-        - "custom"
-    RoutingConfigurationDetails:
-      description: "Definition of Routing Configuration Details including routing configuration type and other routing details associated with the routing configuration type."
+    ProgressIndicatorTypeCapabilities:
+      description: "Progress Indicator Type capabilities."
       type: "object"
       properties:
-        routingConfigurationType:
-          $ref: "#/components/schemas/RoutingConfigurationType"
-      discriminator:
-        propertyName: "routingConfigurationType"
-        mapping:
-          QueueRoutingType: "#/components/schemas/QueueRoutingConfigDetails"
-          AgentRoutingType: "#/components/schemas/AgentRoutingConfigDetails"
-    OptionPickerInput:
-      description: "A picker input to select an option"
+        formatTypeCapabilities:
+          type: "array"
+          description: "The list of Format Types supported for this progress indicator type. Required."
+          items:
+            $ref: "#/components/schemas/FormatTypeCapabilities"
+        progressIndicatorType:
+          description: "The list of supported progress indicator types. Required."
+          $ref: "#/components/schemas/ProgressIndicatorType"
+      required:
+        - "progressIndicatorType"
+        - "formatTypeCapabilities"
+    ProgressUpdateIndicator:
+      description: "An update to the progress"
       allOf:
-        - $ref: "#/components/schemas/AbstractInput"
+        - $ref: "#/components/schemas/AbstractProgressIndicator"
         - type: "object"
           properties:
-            selectedOptionIndex:
-              type: "integer"
-            optionItems:
-              type: "array"
-              minItems: 1
-              items:
-                $ref: "#/components/schemas/TitleOptionItem"
-          required:
-            - "optionItems"
-    EstimatedWaitTime:
-      type: "object"
-      description: "Estimated Wait Time value and whether the Estimated Wait Time is requested or not."
-      properties:
-        estimatedWaitTimeInSeconds:
-          type: "integer"
-          format: "int32"
-        isEWTRequested:
-          type: "boolean"
-    EventType:
-      type: "string"
-      enum:
-        - "Interaction"
-        - "RoutingRequested"
+            progressMessage:
+              $ref: "#/components/schemas/AbstractProgressMessage"
     StaticContentMessage:
       description: "Non interactive MT or MO message with static content"
       allOf:
@@ -952,16 +616,6 @@ components:
               $ref: "#/components/schemas/AbstractStaticContent"
           required:
             - "staticContent"
-    ReferenceValue:
-      description: "A reference value"
-      allOf:
-        - $ref: "#/components/schemas/AbstractValue"
-        - type: "object"
-          properties:
-            referenceId:
-              $ref: "#/components/schemas/UniqueId"
-          required:
-            - "referenceId"
     StaticContentLinks:
       description: "A list of web links."
       allOf:
@@ -976,6 +630,24 @@ components:
                 $ref: "#/components/schemas/Link"
           required:
             - "links"
+    ChoicesTimePicker:
+      description: "Choices as a time picker"
+      allOf:
+        - $ref: "#/components/schemas/AbstractChoices"
+        - type: "object"
+          properties:
+            calendarEvent:
+              $ref: "#/components/schemas/CalendarEventOptionsItem"
+            images:
+              type: "array"
+              items:
+                $ref: "#/components/schemas/ImageAsset"
+            message:
+              $ref: "#/components/schemas/AbstractTitleItem"
+            reply:
+              $ref: "#/components/schemas/AbstractTitleItem"
+          required:
+            - "calendarEvent"
     DateTimePickerInput:
       description: "An input to pick a date and time"
       allOf:
@@ -1001,24 +673,6 @@ components:
               description: "Minimum date time value possible"
               type: "string"
               example: "2021-02-25 14:00:00"
-    ChoicesTimePicker:
-      description: "Choices as a time picker"
-      allOf:
-        - $ref: "#/components/schemas/AbstractChoices"
-        - type: "object"
-          properties:
-            calendarEvent:
-              $ref: "#/components/schemas/CalendarEventOptionsItem"
-            images:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/ImageAsset"
-            message:
-              $ref: "#/components/schemas/AbstractTitleItem"
-            reply:
-              $ref: "#/components/schemas/AbstractTitleItem"
-          required:
-            - "calendarEvent"
     Attachment:
       description: "A file sent as an attachment with a message."
       additionalProperties: false
@@ -1053,23 +707,24 @@ components:
               description: "The type. Required."
           required:
             - "type"
-    TitleVideoItem:
-      allOf:
-        - $ref: "#/components/schemas/AbstractTitleItem"
-        - type: "object"
-          properties:
-            videoId:
-              $ref: "#/components/schemas/UniqueId"
-            imageId:
-              $ref: "#/components/schemas/UniqueId"
-          required:
-            - "videoId"
+    MessageDefinitionNameOrId:
+      type: "string"
+      description: "A reference to a message definition by unique name or id"
     RoutingResult:
       description: "Result of conversation routing if either successful or failure"
       allOf:
         - $ref: "#/components/schemas/AbstractEntry"
         - type: "object"
           properties:
+            workOwnerId:
+              type: "string"
+              description: "The SFDC Id of user who is requesting cancellation"
+            estimatedWaitTime:
+              description: "Estimated Wait Time value and whether this Estimated Wait Time is requested"
+              $ref: "#/components/schemas/EstimatedWaitTime"
+            initiator:
+              description: "The participant who initiated the routing"
+              $ref: "#/components/schemas/Participant"
             recordId:
               type: "string"
               description: "Routed record ID from omni event - if successful"
@@ -1081,12 +736,12 @@ components:
             pendingServiceRoutingId:
               type: "string"
               description: "PSR ID from omni event - if successful"
+            skipRouterCPRemovalIfNoRoutingFailures:
+              type: "boolean"
+              description: "Indicates whether the router CP removal should be skipped if there are no routing failures"
             routingType:
               description: "Routing Type"
               $ref: "#/components/schemas/RoutingType"
-            estimatedWaitTime:
-              description: "Estimated Wait Time value and whether this Estimated Wait Time is requested"
-              $ref: "#/components/schemas/EstimatedWaitTime"
             failureReason:
               type: "string"
               description: "Indicates the specific reason for the failure"
@@ -1096,6 +751,9 @@ components:
             isExternallyRouted:
               type: "boolean"
               description: "Indicates whether routing is initiated from an external partner system or not"
+            cancelReason:
+              description: "Reason for cancelling the conference routing"
+              $ref: "#/components/schemas/CancelReason"
             routingConfigurationDetails:
               description: "Routing Configuration Detail, including routing method and details associated with the routing method."
               $ref: "#/components/schemas/RoutingConfigurationDetails"
@@ -1130,78 +788,13 @@ components:
         - "name"
       discriminator:
         propertyName: "itemType"
-    SelectedOptionsInputValue:
-      description: "The select options of a select/picker input"
-      allOf:
-        - $ref: "#/components/schemas/AbstractInputValue"
-        - type: "object"
-          properties:
-            selectedOptions:
-              type: "array"
-              items:
-                $ref: "#/components/schemas/SelectedOption"
-          required:
-            - "selectedOptions"
     LocationItemType:
       type: "string"
       description: "The type of a location item."
       enum:
         - "LocationItem"
-    RoutingParameter:
-      type: "object"
-      properties:
-        queueId:
-          type: "string"
-        channelData:
-          type: "string"
-          description: "Internal context about the routing request. Maps to RoutingContext"
-        isTransfer:
-          type: "boolean"
-        routingConfigId:
-          type: "string"
-        userId:
-          type: "string"
-        isFallbackOnPsrNotCreated:
-          type: "boolean"
-        serviceChannelId:
-          type: "string"
-        isEstimatedWaitTimeRequested:
-          type: "boolean"
-        skillsList:
-          type: "array"
-          items:
-            $ref: "#/components/schemas/SkillInfo"
-        botId:
-          type: "string"
-        flowId:
-          type: "string"
-        isScrt2:
-          type: "boolean"
-        isUserRequired:
-          type: "boolean"
-    CalendarEventOptionsItem:
-      description: "A calendar events with time slot options"
-      allOf:
-        - $ref: "#/components/schemas/AbstractCalendarEventItem"
-        - type: "object"
-          properties:
-            identifier:
-              $ref: "#/components/schemas/UniqueIdentifier"
-            timeSlotOptionItems:
-              type: "array"
-              minItems: 1
-              items:
-                $ref: "#/components/schemas/TimeSlotOptionItem"
-          required:
-            - "identifier"
-            - "timeSlotOptionItems"
-    WebViewDisplayType:
-      type: "string"
-      description: "How a StaticContentWebView should be displayed."
-      enum:
-        - "AutoOverlay"
     SelectNavigationInput:
-      description: "A select input that allow navigation to a specifc section"
+      description: "A select input that allow navigation to a specific section"
       allOf:
         - $ref: "#/components/schemas/AbstractInput"
         - type: "object"
@@ -1238,10 +831,10 @@ components:
       enum:
         - "EndUser"
         - "Chatbot"
-        - "System"
         - "Agent"
-        - "Router"
         - "Supervisor"
+        - "System"
+        - "Router"
     ChoicesResponseMessage:
       description: "MO response message to a choices message"
       allOf:
@@ -1278,25 +871,14 @@ components:
               format: "date-time"
           required:
             - "dateTimeValue"
-    DatePickerInput:
-      description: "An input to pick a date"
+    FlagRaise:
+      description: "A Flag Raise entry"
       allOf:
-        - $ref: "#/components/schemas/AbstractInput"
+        - $ref: "#/components/schemas/AbstractEntry"
         - type: "object"
           properties:
-            maximumDate:
-              type: "string"
-              format: "date"
-            dateFormat:
-              type: "string"
-              example: "MM/DD/YYYY"
-            minimumDate:
-              type: "string"
-              format: "date"
-            startDate:
-              type: "string"
-              format: "date"
-              example: "2021-02-25"
+            abstractMessage:
+              $ref: "#/components/schemas/AbstractMessage"
     ListValue:
       description: "A composite value that contains a list of other values"
       allOf:
@@ -1310,22 +892,6 @@ components:
                 $ref: "#/components/schemas/AbstractValue"
           required:
             - "items"
-    FormSplashScreen:
-      description: "A splash screen for a form"
-      allOf:
-        - $ref: "#/components/schemas/AbstractFormIntroScreen"
-        - type: "object"
-          properties:
-            imageId:
-              $ref: "#/components/schemas/UniqueId"
-            text:
-              type: "string"
-            title:
-              type: "string"
-            buttonLabel:
-              type: "string"
-      required:
-        - "buttonLabel"
     TimeSlotOptionItem:
       description: "A time slot option of a choice or form message."
       allOf:
@@ -1378,6 +944,11 @@ components:
               description: "The max number of items in the array. Required."
           required:
             - "maxItems"
+    ApplicationType:
+      type: "string"
+      description: "The type of an application"
+      enum:
+        - "ExternalApplication"
     MimeTypeRestriction:
       description: "Mime type restrictions for the message field."
       allOf:
@@ -1389,21 +960,6 @@ components:
               description: "The media mime type. Required."
           required:
             - "mimeType"
-    ApplicationType:
-      type: "string"
-      description: "The type of an application"
-      enum:
-        - "ExternalApplication"
-    PendingAttachmentUploadResult:
-      description: "Attachment upload that is pending and will be handled async"
-      allOf:
-        - $ref: "#/components/schemas/AbstractAttachmentUploadResult"
-        - type: "object"
-          properties:
-            referenceId:
-              $ref: "#/components/schemas/UniqueId"
-          required:
-            - "referenceId"
     AbstractFormResponse:
       type: "object"
       properties:
@@ -1415,6 +971,1285 @@ components:
         propertyName: "formatType"
         mapping:
           Inputs: "#/components/schemas/FormResponseInputs"
+          Result: "#/components/schemas/FormResponseResult"
+    AbstractStaticContent:
+      type: "object"
+      properties:
+        formatType:
+          $ref: "#/components/schemas/FormatType"
+      required:
+        - "formatType"
+      discriminator:
+        propertyName: "formatType"
+        mapping:
+          ExperienceType: "#/components/schemas/StaticContentExperienceType"
+          Media: "#/components/schemas/StaticContentMedia"
+          Links: "#/components/schemas/StaticContentLinks"
+          Text: "#/components/schemas/StaticContentText"
+          RichLink: "#/components/schemas/StaticContentRichLink"
+          WebView: "#/components/schemas/StaticContentWebView"
+          Attachments: "#/components/schemas/StaticContentAttachments"
+          Application: "#/components/schemas/StaticContentApplication"
+    AbstractForm:
+      type: "object"
+      properties:
+        formatType:
+          $ref: "#/components/schemas/FormatType"
+      required:
+        - "formatType"
+      discriminator:
+        propertyName: "formatType"
+        mapping:
+          Inputs: "#/components/schemas/FormInputs"
+          MessageDefinition: "#/components/schemas/FormMessageDefinition"
+    RoutingRequestedEvent:
+      type: "object"
+      properties:
+        conversationIdentifier:
+          type: "string"
+        routingParameters:
+          $ref: "#/components/schemas/RoutingParameter"
+        routingType:
+          $ref: "#/components/schemas/RoutingType"
+        workRecordId:
+          type: "string"
+    FormRecordsResult:
+      description: "The resulting records of handling a form response"
+      allOf:
+        - $ref: "#/components/schemas/AbstractFormResult"
+        - type: "object"
+          properties:
+            records:
+              minItems: 1
+              maxItems: 1
+              type: "array"
+              items:
+                $ref: "#/components/schemas/RecordResult"
+          required:
+            - "records"
+    TextInputKeyboardType:
+      type: "string"
+      enum:
+        - "Default"
+        - "AsciiCapable"
+        - "NumbersAndPunctuation"
+        - "URL"
+        - "NumberPad"
+        - "PhonePad"
+        - "NamePhonePad"
+        - "EmailAddress"
+        - "DecimalPad"
+        - "Twitter"
+        - "WebSearch"
+    TypingStoppedIndicator:
+      description: "A typing stopped indicator entry"
+      allOf:
+        - $ref: "#/components/schemas/AbstractEntry"
+        - type: "object"
+          properties:
+            timestamp:
+              type: "integer"
+              format: "int64"
+          required:
+            - "timestamp"
+    RequiredFieldRestriction:
+      description: "Required field restriction for a message field."
+      allOf:
+        - $ref: "#/components/schemas/AbstractFieldRestriction"
+        - type: "object"
+          properties:
+            fieldRequired:
+              type: "boolean"
+              description: "The required flag for a field. Required."
+          required:
+            - "fieldRequired"
+    LocationItem:
+      description: "A location item."
+      allOf:
+        - $ref: "#/components/schemas/AbstractLocationItem"
+    FormIntroScreenType:
+      type: "string"
+      enum:
+        - "FormSplashScreen"
+    StaticContentApplication:
+      description: "A link out to an application"
+      allOf:
+        - $ref: "#/components/schemas/AbstractStaticContent"
+        - type: "object"
+          properties:
+            application:
+              $ref: "#/components/schemas/AbstractApplication"
+          required:
+            - "application"
+    ExperienceTypeValue:
+      description: "An Experience Type value"
+      allOf:
+        - $ref: "#/components/schemas/AbstractValue"
+        - type: "object"
+          properties:
+            type:
+              $ref: "#/components/schemas/ExperienceTypeRef"
+              description: "Target Type"
+            property:
+              type: "string"
+              description: "Target Property"
+            value:
+              description: "A value - this can be Any type as per OAS https://swagger.io/docs/specification/data-models/data-types/#any"
+              example: "a free form string or an object or an array"
+          required:
+            - "type"
+            - "value"
+    MessageDeliveryFailed:
+      description: "A message could not be delivered"
+      allOf:
+        - $ref: "#/components/schemas/AbstractEntry"
+        - type: "object"
+          properties:
+            recipient:
+              $ref: "#/components/schemas/Participant"
+            errorMessage:
+              type: "string"
+            failedConversationEntryIdentifier:
+              type: "string"
+            errorCode:
+              type: "string"
+          required:
+            - "recipient"
+            - "errorCode"
+    ImageReferenceValue:
+      description: "An image reference value"
+      allOf:
+        - $ref: "#/components/schemas/AbstractValue"
+        - type: "object"
+          properties:
+            imageReferenceId:
+              $ref: "#/components/schemas/UniqueId"
+          required:
+            - "imageReferenceId"
+    ParticipantChangedClientMenuMetadata:
+      type: "object"
+      description: "A dialog that client displays in the menu"
+      properties:
+        menuOptions:
+          type: "array"
+          items:
+            type: "object"
+            properties:
+              title:
+                type: "string"
+              optionIdentifier:
+                type: "string"
+          required:
+            - "optionIdentifier"
+            - "title"
+    FormErrorType:
+      type: "string"
+      enum:
+        - "InvalidFormResponse"
+        - "FormRequestExpired"
+        - "ApiResultErrorCode"
+        - "InternalServerError"
+    DeliveryAcknowledgement:
+      description: "Delivery acknowledgement of a conversation entry to a particular recipient"
+      allOf:
+        - $ref: "#/components/schemas/AbstractEntry"
+        - type: "object"
+          properties:
+            recipient:
+              $ref: "#/components/schemas/Participant"
+            acknowledgedConversationEntryIdentifier:
+              type: "string"
+              description: "The conversation entry id of the entry referenced by the acknowledgement"
+            acknowledgementTimestamp:
+              type: "integer"
+              format: "int64"
+          required:
+            - "acknowledgedConversationEntryIdentifier"
+            - "acknowledgementTimestamp"
+            - "recipient"
+    ProgressIndicator:
+      description: "A progress indicator entry"
+      allOf:
+        - $ref: "#/components/schemas/AbstractEntry"
+        - type: "object"
+          properties:
+            progressIndicator:
+              $ref: "#/components/schemas/AbstractProgressIndicator"
+          required:
+            - "progressIndicator"
+    AbstractTitleInteractionItem:
+      type: "object"
+      properties:
+        titleItem:
+          $ref: "#/components/schemas/AbstractTitleItem"
+        itemType:
+          $ref: "#/components/schemas/TitleInteractionItemType"
+      required:
+        - "itemType"
+        - "titleItem"
+      discriminator:
+        propertyName: "itemType"
+    AbstractTitleItem:
+      type: "object"
+      properties:
+        secondarySubTitle:
+          type: "string"
+        itemType:
+          $ref: "#/components/schemas/TitleItemType"
+        title:
+          type: "string"
+        subTitle:
+          type: "string"
+        tertiarySubTitle:
+          type: "string"
+        referenceId:
+          $ref: "#/components/schemas/UniqueId"
+      required:
+        - "itemType"
+        - "title"
+      discriminator:
+        propertyName: "itemType"
+    ReadAcknowledgement:
+      description: "Read acknowledgement high water mark of a conversation entry for a participant in a conversation"
+      allOf:
+        - $ref: "#/components/schemas/AbstractEntry"
+        - type: "object"
+          properties:
+            recipient:
+              $ref: "#/components/schemas/Participant"
+            acknowledgedConversationEntryIdentifier:
+              type: "string"
+              description: "The conversation entry id of the entry referenced by the acknowledgement"
+            acknowledgementTimestamp:
+              type: "integer"
+              format: "int64"
+          required:
+            - "acknowledgedConversationEntryIdentifier"
+            - "acknowledgementTimestamp"
+            - "recipient"
+    AbstractFieldRestriction:
+      description: "Abstract FieldRestriction Object."
+      type: "object"
+      properties:
+        fieldRestrictionType:
+          $ref: "#/components/schemas/FieldRestrictionType"
+      required:
+        - "fieldRestrictionType"
+      discriminator:
+        propertyName: "fieldRestrictionType"
+    IntegerValue:
+      description: "An integer value"
+      allOf:
+        - $ref: "#/components/schemas/AbstractValue"
+        - type: "object"
+          properties:
+            integerValue:
+              type: "integer"
+          required:
+            - "integerValue"
+    TextInputType:
+      type: "string"
+      enum:
+        - "Singleline"
+        - "Multiline"
+    CompletedAttachmentUploadResult:
+      description: "Attachment upload that was completed successfully"
+      allOf:
+        - $ref: "#/components/schemas/AbstractAttachmentUploadResult"
+    SessionStatusChanged:
+      description: "A session status changed"
+      allOf:
+        - $ref: "#/components/schemas/AbstractEntry"
+        - type: "object"
+          properties:
+            conversationIdentifier:
+              type: "string"
+              description: "Conversation Identifier"
+            channelAddressIdentifier:
+              type: "string"
+              description: "Channel Address Identifier"
+            sessionStatusPrev:
+              $ref: "#/components/schemas/SessionStatus"
+              description: "Previous value for session status"
+            sessionEndedByRole:
+              $ref: "#/components/schemas/ParticipantRole"
+              description: "The role of the participant that ended the session"
+            sessionEndTime:
+              format: "int64"
+              description: "Start epoch timestamp for session end time"
+              type: "integer"
+              example: "1573503300"
+            sessionStatus:
+              $ref: "#/components/schemas/SessionStatus"
+              description: "Updated session status"
+            sessionStartTime:
+              format: "int64"
+              description: "Start epoch timestamp for session start time"
+              type: "integer"
+              example: "1573503300"
+            sessionId:
+              type: "string"
+              description: "Session id"
+          required:
+            - "sessionId"
+            - "channelAddressIdentifier"
+            - "conversationIdentifier"
+            - "sessionStatus"
+            - "sessionStartTime"
+    InteractionEvent:
+      type: "object"
+      properties:
+        recipient:
+          $ref: "#/components/schemas/Participant"
+        conversationIdentifier:
+          type: "string"
+        channelAddressIdentifier:
+          type: "string"
+        payload:
+          $ref: "#/components/schemas/ConversationEntry"
+      required:
+        - "channelAddressIdentifier"
+        - "recipient"
+        - "payload"
+        - "conversationIdentifier"
+    EndUserConsentUpdated:
+      description: "An end user consent updated entry"
+      allOf:
+        - $ref: "#/components/schemas/AbstractEntry"
+        - type: "object"
+          properties:
+            isEndUserInitiated:
+              type: "boolean"
+              description: "true if the end user initiated the consent action."
+            initiatingConversationEntryIdentifier:
+              type: "string"
+              description: "Identifier that indicates the conversation entry that initiated the consent update."
+              example: "a133c185-73a7-4adf-b6d9-b7fd62babb4e"
+            endUserSubject:
+              type: "string"
+              description: "End user for which the consent got updated."
+            endUserDisplayName:
+              type: "string"
+              description: "Display name of the end user which can be null."
+            confirmationConversationEntryIdentifier:
+              type: "string"
+              description: "Identifier that indicates the conversation entry that was sent as a consent confirmation to the end user."
+              example: "b233c185-73a7-4adf-b6d9-b7fd62babb4e"
+            consentStatus:
+              $ref: "#/components/schemas/ConsentStatus"
+              description: "The end user's consent status."
+          required:
+            - "endUserSubject"
+            - "consentStatus"
+            - "isEndUserInitiated"
+    RecordResult:
+      type: "object"
+      properties:
+        recordReferenceId:
+          $ref: "#/components/schemas/UniqueId"
+        resultMessage:
+          type: "string"
+        isCreated:
+          type: "boolean"
+      required:
+        - "recordReferenceId"
+        - "isCreated"
+    Capabilities:
+      description: "A set of capabilities for a channel."
+      type: "object"
+      properties:
+        channelCapabilities:
+          minItems: 1
+          description: "A list of the capabilities and restrictions for the request's app's channels. Required."
+          type: "array"
+          items:
+            $ref: "#/components/schemas/ChannelCapabilities"
+        appType:
+          description: "The app for which the capabilities are being registered. Required."
+          $ref: "#/components/schemas/AppType"
+      required:
+        - "appType"
+        - "channelCapabilities"
+    StaticFooter:
+      description: "The footer object that will have a button at a minimum"
+      allOf:
+        - $ref: "#/components/schemas/AbstractInput"
+        - type: "object"
+          properties:
+            buttonLabel:
+              type: "string"
+              description: "Label on the button on the footer of a screen to help navigation between screens"
+          required:
+            - "buttonLabel"
+    MessageId:
+      type: "string"
+      description: "UUID that references a message"
+      example: "57904eb6-5352-4c5e-adf6-5f100572cf5d"
+    AbstractChoicesResponse:
+      type: "object"
+      properties:
+        formatType:
+          $ref: "#/components/schemas/FormatType"
+      required:
+        - "formatType"
+      discriminator:
+        propertyName: "formatType"
+        mapping:
+          Selections: "#/components/schemas/ChoicesResponseSelections"
+    DimensionType:
+      type: "string"
+      description: "If specified indicates how the dimension field should be interpreted."
+      enum:
+        - "PIXEL"
+        - "RATIO"
+    SelectInput:
+      description: "A single or multiple select input"
+      allOf:
+        - $ref: "#/components/schemas/AbstractInput"
+        - type: "object"
+          properties:
+            selectionDisplay:
+              $ref: "#/components/schemas/SelectionDisplay"
+              description: "How the options should be displayed"
+            multipleSelection:
+              type: "boolean"
+            optionItems:
+              type: "array"
+              minItems: 1
+              items:
+                $ref: "#/components/schemas/TitleOptionItem"
+          required:
+            - "optionItems"
+    ParticipantChangedOperation:
+      type: "string"
+      description: "set of participant changed operation"
+      enum:
+        - "add"
+        - "remove"
+        - "update"
+    ChoicesButtons:
+      description: "Choices with button options"
+      allOf:
+        - $ref: "#/components/schemas/AbstractChoices"
+        - type: "object"
+          properties:
+            text:
+              type: "string"
+            optionItems:
+              minItems: 1
+              description: "Items must be of type TitleOptionItem."
+              type: "array"
+              items:
+                $ref: "#/components/schemas/TitleOptionItem"
+          required:
+            - "text"
+            - "optionItems"
+    ConsultConversationInfo:
+      description: "Consult conversation in a Multiparty conversation"
+      allOf:
+        - $ref: "#/components/schemas/AbstractEntry"
+        - type: "object"
+          properties:
+            conversationIdentifier:
+              type: "string"
+              description: "Id of the consult conversation"
+            timestamp:
+              type: "integer"
+              format: "int64"
+              description: "Timestamp of the consult conversation"
+          required:
+            - "conversationIdentifier"
+            - "timestamp"
+    FormInputs:
+      description: "A form with inputs"
+      allOf:
+        - $ref: "#/components/schemas/AbstractForm"
+        - type: "object"
+          properties:
+            formTitle:
+              $ref: "#/components/schemas/AbstractTitleItem"
+            introScreen:
+              $ref: "#/components/schemas/AbstractFormIntroScreen"
+            images:
+              type: "array"
+              items:
+                $ref: "#/components/schemas/ImageAsset"
+            message:
+              $ref: "#/components/schemas/AbstractTitleItem"
+            reply:
+              $ref: "#/components/schemas/AbstractTitleItem"
+            sections:
+              type: "array"
+              minItems: 1
+              items:
+                $ref: "#/components/schemas/AbstractInputSection"
+          required:
+            - "formTitle"
+            - "sections"
+    FieldRestrictionType:
+      type: "string"
+      description: "The set field indicated the restriction type for this FieldRestriction."
+      enum:
+        - "StringFieldRestriction"
+        - "MimeTypeRestriction"
+        - "FileSizeRestriction"
+        - "DimensionRestriction"
+        - "ArrayRestriction"
+        - "RequiredFieldRestriction"
+        - "TypeRestriction"
+    FormErrorResult:
+      description: "The resulting error of handling a form response"
+      allOf:
+        - $ref: "#/components/schemas/AbstractFormResult"
+        - type: "object"
+          properties:
+            errors:
+              type: "array"
+              minItems: 1
+              items:
+                $ref: "#/components/schemas/FormError"
+          required:
+            - "errors"
+    AbstractAsset:
+      description: "The base type of an asset from which concrete asset types extends."
+      type: "object"
+      properties:
+        description:
+          type: "string"
+        id:
+          $ref: "#/components/schemas/UniqueId"
+        mimeType:
+          $ref: "#/components/schemas/MimeType"
+        assetHandle:
+          type: "string"
+          description: "Optional external handle (token) of the asset"
+        assetUrl:
+          $ref: "#/components/schemas/Url"
+        referenceId:
+          $ref: "#/components/schemas/UniqueId"
+        assetType:
+          $ref: "#/components/schemas/AssetType"
+      required:
+        - "id"
+        - "assetType"
+        - "mimeType"
+        - "assetUrl"
+      discriminator:
+        propertyName: "assetType"
+    BooleanValue:
+      description: "A boolean value"
+      allOf:
+        - $ref: "#/components/schemas/AbstractValue"
+        - type: "object"
+          properties:
+            booleanValue:
+              type: "boolean"
+          required:
+            - "booleanValue"
+    SessionStatus:
+      type: "string"
+      description: "Enum denoting the status of the session in the conversation."
+      enum:
+        - "Active"
+        - "Ended"
+        - "Waiting"
+        - "New"
+        - "Consent"
+        - "Inactive"
+        - "Error"
+        - "Paused"
+    AbstractInputValue:
+      type: "object"
+      properties:
+        inputValueType:
+          $ref: "#/components/schemas/InputValueType"
+        inputId:
+          $ref: "#/components/schemas/InputId"
+        inputlabel:
+          $ref: "#/components/schemas/AbstractTitleItem"
+      required:
+        - "inputValueType"
+        - "inputId"
+      discriminator:
+        propertyName: "inputValueType"
+    ChoicesMessage:
+      description: "MT message with choices"
+      allOf:
+        - $ref: "#/components/schemas/AbstractMessage"
+        - type: "object"
+          properties:
+            choices:
+              $ref: "#/components/schemas/AbstractChoices"
+          required:
+            - "choices"
+    ChoicesMessageDefinition:
+      description: "Choices with option references"
+      allOf:
+        - $ref: "#/components/schemas/AbstractChoices"
+        - type: "object"
+          properties:
+            options:
+              type: "array"
+              minItems: 1
+              items:
+                $ref: "#/components/schemas/OptionValue"
+            messageDefinitionId:
+              $ref: "#/components/schemas/RecordId"
+              deprecated: true
+            optionReferences:
+              minItems: 0
+              type: "array"
+              items:
+                $ref: "#/components/schemas/OptionReference"
+              deprecated: true
+            messageDefinitionNameOrId:
+              $ref: "#/components/schemas/MessageDefinitionNameOrId"
+            targetLocale:
+              $ref: "#/components/schemas/Locale"
+              description: "The requested locale the message should be translated into"
+              example: "en-US"
+            parameters:
+              type: "array"
+              items:
+                $ref: "#/components/schemas/NamedValue"
+          required:
+            - "messageDefinitionNameOrId"
+            - "options"
+    SingleInputValue:
+      description: "Single value of an input"
+      allOf:
+        - $ref: "#/components/schemas/AbstractInputValue"
+        - type: "object"
+          properties:
+            displayValue:
+              type: "string"
+            value:
+              $ref: "#/components/schemas/AbstractValue"
+          required:
+            - "value"
+    ChannelCapabilities:
+      description: "A set of message type capabilities for a channel."
+      type: "object"
+      properties:
+        channelType:
+          description: "Channel type. Optional."
+          $ref: "#/components/schemas/ChannelType"
+        messageTypeCapabilities:
+          minItems: 1
+          description: "Message Type capabilities."
+          type: "array"
+          items:
+            $ref: "#/components/schemas/MessageTypeCapabilities"
+        progressIndicatorTypeCapabilities:
+          type: "array"
+          description: "Progress Indicator Types capabilities."
+          items:
+            $ref: "#/components/schemas/ProgressIndicatorTypeCapabilities"
+        customIntegration:
+          description: "Custom Integration. Optional"
+          $ref: "#/components/schemas/AbstractCustomIntegration"
+      required:
+        - "messageTypeCapabilities"
+    ChoicesCarousel:
+      description: "Choices as a carousel with options"
+      allOf:
+        - $ref: "#/components/schemas/AbstractChoices"
+        - type: "object"
+          properties:
+            title:
+              type: "string"
+            items:
+              minItems: 1
+              description: "Items must contain more than one TitleOptionItem for the choice options."
+              type: "array"
+              items:
+                $ref: "#/components/schemas/TitleItemWithInteractions"
+            images:
+              type: "array"
+              items:
+                $ref: "#/components/schemas/ImageAsset"
+          required:
+            - "items"
+    ErrorAttachmentUploadResult:
+      description: "Attachment upload that failed"
+      allOf:
+        - $ref: "#/components/schemas/AbstractAttachmentUploadResult"
+        - type: "object"
+          properties:
+            errorMessage:
+              type: "string"
+              description: "A non localized message. Do not use for display in UI."
+            errorType:
+              description: "The type of error to be used for displaying a localized error message in UI"
+              $ref: "#/components/schemas/AttachmentUploadErrorType"
+          required:
+            - "errorType"
+    UniqueIdentifier:
+      type: "string"
+      description: "An string identifier that identifies objects or items uniquely per message instance"
+      example: "7c4cce61-df7a-4a5b-a949-3d6e3ea278b5"
+    SelectedOption:
+      description: "A selection option from a ChoicesSelectionsMessage"
+      additionalProperties: false
+      type: "object"
+      properties:
+        optionTitle:
+          $ref: "#/components/schemas/AbstractTitleItem"
+        optionIdentifier:
+          $ref: "#/components/schemas/UniqueIdentifier"
+      required:
+        - "optionIdentifier"
+    InputType:
+      type: "string"
+      enum:
+        - "SelectInput"
+        - "SelectNavigationInput"
+        - "OptionPickerInput"
+        - "DatePickerInput"
+        - "DateTimePickerInput"
+        - "TextInput"
+        - "StaticFooter"
+        - "StaticTitle"
+    TextValue:
+      description: "A text value"
+      allOf:
+        - $ref: "#/components/schemas/AbstractValue"
+        - type: "object"
+          properties:
+            textValue:
+              type: "string"
+          required:
+            - "textValue"
+    AppType:
+      type: "string"
+      description: "Enum listing unique identifiers for app services."
+      enum:
+        - "custom"
+        - "agent"
+        - "chatbot"
+        - "conversation"
+        - "live_message"
+        - "iamessage"
+    AssetReferenceValue:
+      description: "An asset reference value. Assets can be image, audio, video, document."
+      allOf:
+        - $ref: "#/components/schemas/AbstractValue"
+        - type: "object"
+          properties:
+            assetReferenceId:
+              $ref: "#/components/schemas/UniqueId"
+          required:
+            - "assetReferenceId"
+    AbstractProgressMessage:
+      description: "Base definition for all progress messages"
+      type: "object"
+      properties:
+        formatType:
+          description: "The list of Format Types supported. Required."
+          $ref: "#/components/schemas/FormatType"
+      required:
+        - "formatType"
+      discriminator:
+        propertyName: "formatType"
+        mapping:
+          Text: "#/components/schemas/TextProgressMessage"
+    CustomBotIntegration:
+      description: "Custom bot integration"
+      allOf:
+        - $ref: "#/components/schemas/AbstractCustomIntegration"
+        - type: "object"
+          properties:
+            extConvParticipantIntegDefDevName:
+              type: "string"
+              description: "Developer name of external conversation participant integration definition"
+              maxLength: 240
+            integrationNamespace:
+              type: "string"
+              description: "Integration Namespace represents developer namespace if that exists, or orgId if it does not"
+              maxLength: 240
+          required:
+            - "extConvParticipantIntegDefDevName"
+            - "integrationNamespace"
+    TitleItem:
+      allOf:
+        - $ref: "#/components/schemas/AbstractTitleItem"
+    ParticipantChanged:
+      description: "A participant changed entry"
+      allOf:
+        - $ref: "#/components/schemas/AbstractEntry"
+        - type: "object"
+          properties:
+            entries:
+              type: "array"
+              items:
+                type: "object"
+                properties:
+                  operation:
+                    $ref: "#/components/schemas/ParticipantChangedOperation"
+                  menuMetadata:
+                    $ref: "#/components/schemas/ParticipantChangedClientMenuMetadata"
+                  participant:
+                    $ref: "#/components/schemas/Participant"
+                  displayName:
+                    type: "string"
+          required:
+            - "participant"
+    MessageReason:
+      type: "string"
+      description: "Enum listing unique and specific reason a message was sent."
+      enum:
+        - "AutomatedResponse"
+        - "Consent"
+    MimeType:
+      type: "string"
+      description: "A mime type"
+    Url:
+      type: "string"
+      description: "A url"
+    AttachmentUploadErrorType:
+      type: "string"
+      enum:
+        - "StorageLimitExceeded"
+        - "AttachmentTooLarge"
+        - "AttachmentNotFound"
+        - "AttachmentUploadNotEnabled"
+        - "AttachmentUploadNotAllowed"
+        - "InternalServerError"
+    EntryId:
+      type: "string"
+      description: "UUID that references this entry"
+      example: "f7904eb6-5352-4c5e-adf6-5f100572cf5d"
+    ConsentStatus:
+      type: "string"
+      description: "Enum denoting the consent status of the end user."
+      enum:
+        - "OptIn"
+        - "OptOut"
+    RecordId:
+      type: "string"
+      description: "An id of an application record"
+    ExperienceTypeRef:
+      type: "string"
+      description: "Unique reference to an Experience Type"
+    FormMessage:
+      description: "MT Form message"
+      allOf:
+        - $ref: "#/components/schemas/AbstractMessage"
+        - type: "object"
+          properties:
+            form:
+              $ref: "#/components/schemas/AbstractForm"
+          required:
+            - "form"
+    ImageAsset:
+      description: "An image asset of a message."
+      allOf:
+        - $ref: "#/components/schemas/AbstractAsset"
+    CompositeValue:
+      description: "A composite value that contains a collection of named values"
+      allOf:
+        - $ref: "#/components/schemas/AbstractValue"
+        - type: "object"
+          properties:
+            items:
+              type: "array"
+              minItems: 1
+              items:
+                $ref: "#/components/schemas/NamedValue"
+          required:
+            - "items"
+    RoutingType:
+      type: "string"
+      description: "Routing type - sent in routing related events as well as in the RoutingContext"
+      enum:
+        - "Initial"
+        - "Transfer"
+        - "Conference"
+    CustomHandlingType:
+      type: "string"
+      description: "Specifies the type of custom handling required for this message"
+      enum:
+        - "None"
+        - "Survey"
+    TextContentType:
+      type: "string"
+      description: "The content format of the text."
+      enum:
+        - "PlainText"
+        - "Markdown"
+    Text:
+      type: "string"
+      description: "Text content"
+    FormatTypeCapabilities:
+      description: "A Format Type capabilities."
+      type: "object"
+      properties:
+        formatType:
+          description: "The name of the format type. Required."
+          $ref: "#/components/schemas/FormatType"
+        capabilityFieldRestriction:
+          type: "array"
+          description: "field restrictions."
+          items:
+            $ref: "#/components/schemas/CapabilityFieldRestriction"
+      required:
+        - "formatType"
+    TimeSlotItemType:
+      type: "string"
+      description: "The type of a time slot item."
+      enum:
+        - "TimeSlotOptionItem"
+    FileSizeRestriction:
+      description: "File size restrictions for the message field."
+      allOf:
+        - $ref: "#/components/schemas/AbstractFieldRestriction"
+        - type: "object"
+          properties:
+            maxSizeInKb:
+              type: "integer"
+              format: "int64"
+              description: "The max file size in kilobytes. Required."
+          required:
+            - "maxSizeInKb"
+    CustomChannelIntegration:
+      description: "Custom channel integration"
+      allOf:
+        - $ref: "#/components/schemas/AbstractCustomIntegration"
+        - type: "object"
+          properties:
+            integrationNamespace:
+              type: "string"
+              description: "Integration Namespace represents developer namespace if that exist or in case when it does not exist it can be orgId"
+              maxLength: 240
+            conversationChannelDefinitionDevName:
+              type: "string"
+              description: "Developer name of conversation channel definition"
+              maxLength: 240
+          required:
+            - "conversationChannelDefinitionDevName"
+            - "integrationNamespace"
+    ProgressIndicatorType:
+      type: "string"
+      description: "The type of progress indicator"
+      enum:
+        - "ProgressUpdateIndicator"
+    StaticContentAttachments:
+      description: "Attachments with optional text"
+      allOf:
+        - $ref: "#/components/schemas/AbstractStaticContent"
+        - type: "object"
+          properties:
+            text:
+              $ref: "#/components/schemas/Text"
+            attachments:
+              type: "array"
+              minItems: 1
+              items:
+                $ref: "#/components/schemas/Attachment"
+          required:
+            - "attachments"
+    AbstractChoices:
+      type: "object"
+      properties:
+        formatType:
+          $ref: "#/components/schemas/FormatType"
+      required:
+        - "formatType"
+      discriminator:
+        propertyName: "formatType"
+        mapping:
+          TimePicker: "#/components/schemas/ChoicesTimePicker"
+          MessageDefinition: "#/components/schemas/ChoicesMessageDefinition"
+          Buttons: "#/components/schemas/ChoicesButtons"
+          Carousel: "#/components/schemas/ChoicesCarousel"
+          QuickReplies: "#/components/schemas/ChoicesQuickReplies"
+          ListPicker: "#/components/schemas/ChoicesListPicker"
+    AgentRoutingConfigDetails:
+      description: "Agent routing based configuration details."
+      allOf:
+        - $ref: "#/components/schemas/RoutingConfigurationDetails"
+        - type: "object"
+          properties:
+            agentId:
+              type: "string"
+    ChannelType:
+      description: "Channel type."
+      enum:
+        - "custom"
+    RoutingConfigurationDetails:
+      description: "Definition of Routing Configuration Details including routing configuration type and other routing details associated with the routing configuration type."
+      type: "object"
+      properties:
+        routingConfigurationType:
+          $ref: "#/components/schemas/RoutingConfigurationType"
+      discriminator:
+        propertyName: "routingConfigurationType"
+        mapping:
+          QueueRoutingType: "#/components/schemas/QueueRoutingConfigDetails"
+          AgentRoutingType: "#/components/schemas/AgentRoutingConfigDetails"
+    Locale:
+      type: "string"
+      description: "A locale as defined by IETF BCP 47"
+      example: "en-US"
+    OptionPickerInput:
+      description: "A picker input to select an option"
+      allOf:
+        - $ref: "#/components/schemas/AbstractInput"
+        - type: "object"
+          properties:
+            selectedOptionIndex:
+              type: "integer"
+            optionItems:
+              type: "array"
+              minItems: 1
+              items:
+                $ref: "#/components/schemas/TitleOptionItem"
+          required:
+            - "optionItems"
+    EstimatedWaitTime:
+      type: "object"
+      description: "Estimated Wait Time value and whether the Estimated Wait Time is requested or not."
+      properties:
+        estimatedWaitTimeInSeconds:
+          type: "integer"
+          format: "int32"
+        isEWTRequested:
+          type: "boolean"
+    Recipients:
+      type: "object"
+      description: "Recipients of a conversation entry"
+      properties:
+        secondary:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Recipient"
+        hidden:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Recipient"
+        primary:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Recipient"
+    EventType:
+      type: "string"
+      enum:
+        - "Interaction"
+        - "RoutingRequested"
+    ReferenceValue:
+      description: "A reference value"
+      allOf:
+        - $ref: "#/components/schemas/AbstractValue"
+        - type: "object"
+          properties:
+            referenceId:
+              $ref: "#/components/schemas/UniqueId"
+          required:
+            - "referenceId"
+    TitleVideoItem:
+      allOf:
+        - $ref: "#/components/schemas/AbstractTitleItem"
+        - type: "object"
+          properties:
+            videoId:
+              $ref: "#/components/schemas/UniqueId"
+            imageId:
+              $ref: "#/components/schemas/UniqueId"
+          required:
+            - "videoId"
+    SelectedOptionsInputValue:
+      description: "The select options of a select/picker input"
+      allOf:
+        - $ref: "#/components/schemas/AbstractInputValue"
+        - type: "object"
+          properties:
+            selectedOptions:
+              type: "array"
+              items:
+                $ref: "#/components/schemas/SelectedOption"
+          required:
+            - "selectedOptions"
+    RoutingParameter:
+      type: "object"
+      properties:
+        queueId:
+          type: "string"
+        channelData:
+          type: "string"
+          description: "Internal context about the routing request. Maps to RoutingContext"
+        isTransfer:
+          type: "boolean"
+        routingConfigId:
+          type: "string"
+        userId:
+          type: "string"
+        isFallbackOnPsrNotCreated:
+          type: "boolean"
+        serviceChannelId:
+          type: "string"
+        isEstimatedWaitTimeRequested:
+          type: "boolean"
+        skillsList:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/SkillInfo"
+        botId:
+          type: "string"
+        flowId:
+          type: "string"
+        isScrt2:
+          type: "boolean"
+        isUserRequired:
+          type: "boolean"
+    RecordReference:
+      description: "A reference to a record."
+      additionalProperties: false
+      type: "object"
+      properties:
+        recordId:
+          $ref: "#/components/schemas/RecordId"
+        id:
+          $ref: "#/components/schemas/UniqueId"
+      required:
+        - "id"
+        - "recordId"
+    CalendarEventOptionsItem:
+      description: "A calendar events with time slot options"
+      allOf:
+        - $ref: "#/components/schemas/AbstractCalendarEventItem"
+        - type: "object"
+          properties:
+            identifier:
+              $ref: "#/components/schemas/UniqueIdentifier"
+            timeSlotOptionItems:
+              type: "array"
+              minItems: 1
+              items:
+                $ref: "#/components/schemas/TimeSlotOptionItem"
+          required:
+            - "identifier"
+            - "timeSlotOptionItems"
+    WebViewDisplayType:
+      type: "string"
+      description: "How a StaticContentWebView should be displayed."
+      enum:
+        - "AutoOverlay"
+    DatePickerInput:
+      description: "An input to pick a date"
+      allOf:
+        - $ref: "#/components/schemas/AbstractInput"
+        - type: "object"
+          properties:
+            maximumDate:
+              type: "string"
+              format: "date"
+            dateFormat:
+              type: "string"
+              example: "MM/DD/YYYY"
+            minimumDate:
+              type: "string"
+              format: "date"
+            startDate:
+              type: "string"
+              format: "date"
+              example: "2021-02-25"
+    FormSplashScreen:
+      description: "A splash screen for a form"
+      allOf:
+        - $ref: "#/components/schemas/AbstractFormIntroScreen"
+        - type: "object"
+          properties:
+            imageId:
+              $ref: "#/components/schemas/UniqueId"
+            text:
+              type: "string"
+            title:
+              type: "string"
+            buttonLabel:
+              type: "string"
+      required:
+        - "buttonLabel"
+    Recipient:
+      description: "A Recipient"
+      type: "object"
+      properties:
+        identifier:
+          type: "string"
+        displayName:
+          type: "string"
+        contact:
+          type: "string"
+      required:
+        - "identifier"
+    TextProgressMessage:
+      description: "A progress message with text content"
+      allOf:
+        - $ref: "#/components/schemas/AbstractProgressMessage"
+        - type: "object"
+          properties:
+            text:
+              type: "string"
+              maxLength: 255
+          required:
+            - "text"
+    FormResponseResult:
+      description: "The result of handling a form response"
+      allOf:
+        - $ref: "#/components/schemas/AbstractFormResponse"
+        - type: "object"
+          properties:
+            result:
+              $ref: "#/components/schemas/AbstractFormResult"
+          required:
+            - "result"
+    FormMessageDefinition:
+      description: "Reference to a form message definition"
+      allOf:
+        - $ref: "#/components/schemas/AbstractForm"
+        - type: "object"
+          properties:
+            parameters:
+              type: "array"
+              items:
+                $ref: "#/components/schemas/NamedValue"
+            messageDefinitionNameOrId:
+              $ref: "#/components/schemas/MessageDefinitionNameOrId"
+            targetLocale:
+              $ref: "#/components/schemas/Locale"
+              description: "The requested locale the message should be translated into"
+              example: "en-US"
+          required:
+            - "messageDefinitionNameOrId"
+    PendingAttachmentUploadResult:
+      description: "Attachment upload that is pending and will be handled async"
+      allOf:
+        - $ref: "#/components/schemas/AbstractAttachmentUploadResult"
+        - type: "object"
+          properties:
+            referenceId:
+              $ref: "#/components/schemas/UniqueId"
+          required:
+            - "referenceId"
+    CancelReason:
+      type: "string"
+      description: "Reason for cancelling the conference routing"
+      enum:
+        - "Unknown"
+        - "Unavailable"
+        - "Decline"
+        - "Cancel"
+        - "EndUserEnded"
+    MessageContentCategory:
+      description: "Categories for an MT message."
+      type: "string"
+      enum:
+        - "Reminder"
+        - "Feedback"
+        - "OrderUpdate"
+        - "AccountUpdate"
+        - "PromotionalOutreach"
+        - "Authentication"
+      example: "PromotionalOutreach"
     AbstractValue:
       description: "The base type from which simple value types extends"
       type: "object"
@@ -1465,45 +2300,6 @@ components:
         - "Password"
         - "NewPassword"
         - "OneTimeCode"
-    AbstractStaticContent:
-      type: "object"
-      properties:
-        formatType:
-          $ref: "#/components/schemas/FormatType"
-      required:
-        - "formatType"
-      discriminator:
-        propertyName: "formatType"
-        mapping:
-          Media: "#/components/schemas/StaticContentMedia"
-          Links: "#/components/schemas/StaticContentLinks"
-          Text: "#/components/schemas/StaticContentText"
-          RichLink: "#/components/schemas/StaticContentRichLink"
-          WebView: "#/components/schemas/StaticContentWebView"
-          Attachments: "#/components/schemas/StaticContentAttachments"
-          Application: "#/components/schemas/StaticContentApplication"
-    AbstractForm:
-      type: "object"
-      properties:
-        formatType:
-          $ref: "#/components/schemas/FormatType"
-      required:
-        - "formatType"
-      discriminator:
-        propertyName: "formatType"
-        mapping:
-          Inputs: "#/components/schemas/FormInputs"
-    RoutingRequestedEvent:
-      type: "object"
-      properties:
-        conversationIdentifier:
-          type: "string"
-        routingParameters:
-          $ref: "#/components/schemas/RoutingParameter"
-        routingType:
-          $ref: "#/components/schemas/RoutingType"
-        workRecordId:
-          type: "string"
     InReplyToMessageId:
       type: "string"
       description: "MessageId from the previous message being replied to"
@@ -1528,109 +2324,29 @@ components:
           properties:
             messageReason:
               $ref: "#/components/schemas/MessageReason"
-    TypingStoppedIndicator:
-      description: "A typing stopped indicator entry"
+    OptionReference:
+      description: "Deprecated. Replaced by OptionValue and ReferenceValue."
+      additionalProperties: false
+      type: "object"
+      properties:
+        optionId:
+          $ref: "#/components/schemas/UniqueId"
+        referenceId:
+          $ref: "#/components/schemas/UniqueId"
+      required:
+        - "optionId"
+        - "referenceId"
+      deprecated: true
+    FlagLower:
+      description: "A flag Lower entry"
       allOf:
         - $ref: "#/components/schemas/AbstractEntry"
-        - type: "object"
-          properties:
-            timestamp:
-              type: "integer"
-              format: "int64"
-          required:
-            - "timestamp"
-    RequiredFieldRestriction:
-      description: "Required field restriction for a message field."
-      allOf:
-        - $ref: "#/components/schemas/AbstractFieldRestriction"
-        - type: "object"
-          properties:
-            fieldRequired:
-              type: "boolean"
-              description: "The required flag for a field. Required."
-          required:
-            - "fieldRequired"
-    TextInputKeyboardType:
-      type: "string"
-      enum:
-        - "Default"
-        - "AsciiCapable"
-        - "NumbersAndPunctuation"
-        - "URL"
-        - "NumberPad"
-        - "PhonePad"
-        - "NamePhonePad"
-        - "EmailAddress"
-        - "DecimalPad"
-        - "Twitter"
-        - "WebSearch"
-    LocationItem:
-      description: "A location item."
-      allOf:
-        - $ref: "#/components/schemas/AbstractLocationItem"
-    FormIntroScreenType:
-      type: "string"
-      enum:
-        - "FormSplashScreen"
-    StaticContentApplication:
-      description: "A link out to an application"
-      allOf:
-        - $ref: "#/components/schemas/AbstractStaticContent"
-        - type: "object"
-          properties:
-            application:
-              $ref: "#/components/schemas/AbstractApplication"
-          required:
-            - "application"
-    MessageDeliveryFailed:
-      description: "A message could not be delivered"
-      allOf:
-        - $ref: "#/components/schemas/AbstractEntry"
-        - type: "object"
-          properties:
-            recipient:
-              $ref: "#/components/schemas/Participant"
-            errorMessage:
-              type: "string"
-            failedConversationEntryIdentifier:
-              type: "string"
-            errorCode:
-              type: "string"
-          required:
-            - "recipient"
-            - "errorCode"
     RoutingConfigurationType:
       type: "string"
       description: "Enum for Routing Configuration Type"
       enum:
         - "QueueRoutingType"
         - "AgentRoutingType"
-    ImageReferenceValue:
-      description: "An image reference value"
-      allOf:
-        - $ref: "#/components/schemas/AbstractValue"
-        - type: "object"
-          properties:
-            imageReferenceId:
-              $ref: "#/components/schemas/UniqueId"
-          required:
-            - "imageReferenceId"
-    ParticipantChangedClientMenuMetadata:
-      type: "object"
-      description: "A dialog that client displays in the menu"
-      properties:
-        menuOptions:
-          type: "array"
-          items:
-            type: "object"
-            properties:
-              title:
-                type: "string"
-              optionIdentifier:
-                type: "string"
-          required:
-            - "optionIdentifier"
-            - "title"
     StringFieldRestriction:
       description: "String restriction for a message field."
       allOf:
@@ -1674,18 +2390,6 @@ components:
     InputId:
       type: "string"
       description: "An id that uniquely identifies an input in a form message"
-    AbstractTitleInteractionItem:
-      type: "object"
-      properties:
-        titleItem:
-          $ref: "#/components/schemas/AbstractTitleItem"
-        itemType:
-          $ref: "#/components/schemas/TitleInteractionItemType"
-      required:
-        - "itemType"
-        - "titleItem"
-      discriminator:
-        propertyName: "itemType"
     MessageTypeCapabilities:
       description: "Message Type capabilities."
       type: "object"
@@ -1702,26 +2406,6 @@ components:
       required:
         - "messageType"
         - "formatTypeCapabilities"
-    AbstractTitleItem:
-      type: "object"
-      properties:
-        secondarySubTitle:
-          type: "string"
-        itemType:
-          $ref: "#/components/schemas/TitleItemType"
-        title:
-          type: "string"
-        subTitle:
-          type: "string"
-        tertiarySubTitle:
-          type: "string"
-        referenceId:
-          $ref: "#/components/schemas/UniqueId"
-      required:
-        - "itemType"
-        - "title"
-      discriminator:
-        propertyName: "itemType"
     AbstractInput:
       description: "Common attributes for all input types"
       type: "object"
@@ -1739,11 +2423,10 @@ components:
       required:
         - "inputType"
         - "id"
-        - "label"
       discriminator:
         propertyName: "inputType"
     AbstractFormIntroScreen:
-      description: "Common base for all form intoduction screen types"
+      description: "Common base for all form introduction screen types"
       type: "object"
       properties:
         screenType:
@@ -1769,35 +2452,28 @@ components:
         - "CompositeValue"
         - "LocationValue"
         - "AssetReferenceValue"
-    AbstractFieldRestriction:
-      description: "Abstract FieldRestriction Object."
-      type: "object"
-      properties:
-        fieldRestrictionType:
-          $ref: "#/components/schemas/FieldRestrictionType"
-      required:
-        - "fieldRestrictionType"
-      discriminator:
-        propertyName: "fieldRestrictionType"
-    IntegerValue:
-      description: "An integer value"
+        - "ExperienceTypeValue"
+        - "StructuredValue"
+    QueuePosition:
+      description: "End user's position in the queue"
       allOf:
-        - $ref: "#/components/schemas/AbstractValue"
+        - $ref: "#/components/schemas/AbstractEntry"
         - type: "object"
           properties:
-            integerValue:
+            pendingServiceRoutingId:
+              type: "string"
+              description: "Pending Service Routing ID"
+            workItemId:
+              type: "string"
+              description: "The work item ID"
+            position:
               type: "integer"
+              format: "int32"
+              description: "Current position in the queue"
           required:
-            - "integerValue"
-    TextInputType:
-      type: "string"
-      enum:
-        - "Singleline"
-        - "Multiline"
-    CompletedAttachmentUploadResult:
-      description: "Attachment upload that was completed successfully"
-      allOf:
-        - $ref: "#/components/schemas/AbstractAttachmentUploadResult"
+            - "pendingServiceRoutingId"
+            - "workItemId"
+            - "position"
     VideoAsset:
       description: "A video asset of a message."
       allOf:
@@ -1816,22 +2492,6 @@ components:
           CompletedAttachmentUploadResult: "#/components/schemas/CompletedAttachmentUploadResult"
           ErrorAttachmentUploadResult: "#/components/schemas/ErrorAttachmentUploadResult"
           PendingAttachmentUploadResult: "#/components/schemas/PendingAttachmentUploadResult"
-    InteractionEvent:
-      type: "object"
-      properties:
-        recipient:
-          $ref: "#/components/schemas/Participant"
-        conversationIdentifier:
-          type: "string"
-        channelAddressIdentifier:
-          type: "string"
-        payload:
-          $ref: "#/components/schemas/ConversationEntry"
-      required:
-        - "channelAddressIdentifier"
-        - "recipient"
-        - "payload"
-        - "conversationIdentifier"
     ChoicesResponseSelections:
       description: "The selections to a choices message"
       allOf:
@@ -1864,6 +2524,9 @@ components:
         - "Inputs"
         - "WebView"
         - "Text"
+        - "ExperienceType"
+        - "Flow"
+        - "MessageDefinition"
       example: "Attachments"
     AssetType:
       type: "string"
@@ -1885,6 +2548,8 @@ components:
           $ref: "#/components/schemas/AbstractEntry"
         sender:
           $ref: "#/components/schemas/Participant"
+        recipients:
+          $ref: "#/components/schemas/Recipients"
         transcriptedTimestamp:
           type: "integer"
           format: "int64"
@@ -1902,22 +2567,6 @@ components:
         - "clientDuration"
         - "transcriptedTimestamp"
         - "entryType"
-    Capabilities:
-      description: "A set of capabilities for a channel."
-      type: "object"
-      properties:
-        channelCapabilities:
-          minItems: 1
-          description: "A list of the capabilities and restrictions for the request's app's channels. Required."
-          type: "array"
-          items:
-            $ref: "#/components/schemas/ChannelCapabilities"
-        appType:
-          description: "The app for which the capabilities are being registered. Required."
-          $ref: "#/components/schemas/AppType"
-      required:
-        - "appType"
-        - "channelCapabilities"
     CapabilityEncoding:
       type: "string"
       description: "The char encoding to use when evaluating the string."
@@ -1925,6 +2574,14 @@ components:
         - "UTF8"
         - "GSM"
         - "UCS2"
+    StaticTitle:
+      description: "The title object that can be placed anywhere on a section"
+      allOf:
+        - $ref: "#/components/schemas/AbstractInput"
+        - type: "object"
+          properties:
+            titleItem:
+              $ref: "#/components/schemas/TitleItem"
     AbstractTimeSlotItem:
       description: "The base type of a time slot"
       type: "object"
@@ -1947,10 +2604,23 @@ components:
         - "duration"
       discriminator:
         propertyName: "itemType"
-    MessageId:
-      type: "string"
-      description: "UUID that references a message"
-      example: "57904eb6-5352-4c5e-adf6-5f100572cf5d"
+    AbstractProgressIndicator:
+      description: "Base definition for all progress indicators"
+      type: "object"
+      properties:
+        indicatorType:
+          description: "The list of supported indicator types. Required."
+          $ref: "#/components/schemas/ProgressIndicatorType"
+        timestamp:
+          type: "integer"
+          format: "int64"
+      required:
+        - "indicatorType"
+        - "timestamp"
+      discriminator:
+        propertyName: "indicatorType"
+        mapping:
+          ProgressUpdateIndicator: "#/components/schemas/ProgressUpdateIndicator"
     TitleLinkItem:
       allOf:
         - $ref: "#/components/schemas/AbstractTitleInteractionItem"
