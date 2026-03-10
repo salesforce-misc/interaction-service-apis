@@ -897,6 +897,62 @@ Note: In the payload examples above, the key "my__event__e" is the developer nam
 }
 ```
 
+### The Agentforce Service Agent Citation event
+```
+"staticContent": {
+  "formatType": "Text",
+  "text": "To replace your iPhone battery, you can follow step-by-step instructions available on various platforms. Here are some options: 1. DIY Replacement: You can replace the battery yourself using DIY kits. Detailed instructions and comparisons of costs, savings, and time for different models can be found on here. 2. Professional Repair Shop: You can take your iPhone to a reputable repair shop.",
+  "citationContent": {
+    "citations": [
+      {
+        "citedReference": {
+          "citedReferenceType": "Link",
+          "link": {
+            "url": "https://www.ifixit.com/Wiki/iPhone_Battery_Replacement"
+          },
+          "recordId": null,
+          "label": "https://www.ifixit.com/Wiki/iPhone_Battery_Replacement"
+        },
+        "citedDetails": {
+          "citedDetailsType": "InlineMetadata",
+          "inlineMetadata": [
+            {
+              "claim": {
+                "claimStartOffset": 0,
+                "claimEndOffset": 309
+              },
+              "citedLocationOffset": 309
+            }
+          ]
+        }
+      },
+      {
+        "citedReference": {
+          "citedReferenceType": "Link",
+          "link": {
+            "url": "https://www.ifixit.com/News/11220/3-ways-replace-iphone-battery"
+          },
+          "recordId": null,
+          "label": "https://www.ifixit.com/News/11220/3-ways-replace-iphone-battery"
+        },
+        "citedDetails": {
+          "citedDetailsType": "InlineMetadata",
+          "inlineMetadata": [
+            {
+              "claim": {
+                "claimStartOffset": 309,
+                "claimEndOffset": 391
+              },
+              "citedLocationOffset": 391
+            }
+          ]
+        }
+      }
+    ]
+  }
+}
+```
+
 ## Additional Notes
 Use of the code in this repository with Salesforce products or services should be used in accordance with any applicable developers guides on [developer.salesforce.com](https://developer.salesforce.com/) and may be subject to additional terms of use, including but not limited to the [Salesforce Program Agreement - Program Terms for the Salesforce Developers Program](https://www.salesforce.com/company/program-agreement/#devs).
 
