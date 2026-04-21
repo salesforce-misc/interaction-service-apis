@@ -932,6 +932,10 @@ components:
               $ref: "#/components/schemas/Text"
           required:
             - "text"
+        - type: "object"
+          properties:
+            citationContent:
+              $ref: "#/components/schemas/CitationContent"
     ArrayRestriction:
       description: "Array restrictions for the message field."
       allOf:
@@ -2630,6 +2634,110 @@ components:
               $ref: "#/components/schemas/Url"
           required:
             - "url"
+    CitationContent:
+      type: object
+      properties:
+        citations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Citation"
+      required:
+        - citations
+    Citation:
+      description: "Citation referencing the source material a portion of the message was generated from."
+      type: object
+      properties:
+        citedReference:
+          $ref: '#/components/schemas/AbstractCitedReference'
+        citedDetails:
+          $ref: '#/components/schemas/AbstractCitedDetails'
+      required:
+        - citedReference
+    AbstractCitedReference:
+      description: "Base definition for all cited reference types"
+      type: object
+      properties:
+        citedReferenceType:
+          $ref: '#/components/schemas/CitedReferenceType'
+      discriminator:
+        propertyName: citedReferenceType
+        mapping:
+          Link: '#/components/schemas/LinkCitedReference'
+      required:
+        - citedReferenceType
+    AbstractCitedDetails:
+      description: "Base definition for all cited detail types"
+      type: object
+      properties:
+        citedDetailsType:
+          $ref: '#/components/schemas/CitedDetailsType'
+      discriminator:
+        propertyName: citedDetailsType
+        mapping:
+          InlineMetadata: '#/components/schemas/InlineMetadataCitedDetails'
+      required:
+        - citedDetailsType
+    InlineMetadataCitedDetails:
+      description: "Collection of inline metadata for a cited reference."
+      allOf:
+        - $ref: '#/components/schemas/AbstractCitedDetails'
+        - type: object
+          properties:
+            inlineMetadata:
+              type: array
+              minItems: 1
+              items:
+                $ref: "#/components/schemas/CitedInlineMetadata"
+          required:
+            - inlineMetadata
+    CitedReferenceType:
+      description: "The types of cited references."
+      type: string
+      enum:
+        - Link
+    CitedDetailsType:
+      description: "The types of cited details."
+      type: string
+      enum:
+        - InlineMetadata
+    LinkCitedReference:
+      description: "Link reference citation."
+      allOf:
+        - $ref: '#/components/schemas/AbstractCitedReference'
+        - type: object
+          properties:
+            link:
+              $ref: '#/components/schemas/Link'
+            recordId:
+              type: string
+            label:
+              type: string
+          required:
+            - link
+    CitedInlineMetadata:
+      description: "Inline metadata for a citation."
+      type: object
+      properties:
+        citedLocationOffset:
+          description: "The offset position in the message where a citation anchor should be added for this citation."
+          type: integer
+        claim:
+          $ref: '#/components/schemas/CitationClaim'
+      required:
+        - citedLocationOffset
+    CitationClaim:
+      description: "Citation claim."
+      type: object
+      properties:
+        claimStartOffset:
+          description: "Offset position in the message where the citation claim starts."
+          type: integer
+        claimEndOffset:
+          description: "Offset position in the message where the citation claim ends."
+          type: integer
+      required:
+        - claimStartOffset
+        - claimEndOffset
 asyncapi: "1.0.0"
 info:
   title: "Conversation Events"
