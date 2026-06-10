@@ -490,6 +490,107 @@ curl -v \
 }' http://localhost:8085/api/v1/conversation
 ```
 
+#### ConversationEntry API
+
+The `/conversationEntry` API is designed to allow external bots (BYOB) to send messages and retrieve entries in an active conversation.
+
+##### POST `/api/v1/conversationEntry` — Send a message as an external bot
+
+Example request to send a text message into a conversation, be sure to replace placeholder values `<..>`
+
+```bash
+curl -v \
+-H "Authorization: Bearer <AccessToken>" \
+-H "content-type: application/json" \
+-H "OrgId: <OrgId>" \
+-H "AuthorizationContext: <AuthorizationContext>" \
+-H "AuthorizationContextType: ExternalConversationParticipant" \
+-H "RequestId: <RequestId>" \
+-X POST -d '{
+  "conversationIdentifier": "<conversationIdentifier>",
+  "sender": {
+    "subject": "<senderSubject>",
+    "role": "<senderRole>",
+    "appType": "<senderApp>"
+  },
+  "conversationEntries": [
+    {
+      "clientTimestamp": <Timestamp in Unix Epoch Milliseconds>,
+      "entryPayload": {
+        "entryType": "Message",
+        "id": "<entryPayloadId>",
+        "abstractMessage": {
+          "messageType": "StaticContentMessage",
+          "id": "<messageId>",
+          "staticContent": {
+            "formatType": "Text",
+            "text": "<message text>"
+          }
+        }
+      }
+    }
+  ]
+}' http://localhost:8085/api/v1/conversationEntry
+```
+
+- Returns `202 Accepted` on success.
+- Only **one** entry is supported per request (`conversationEntries` max size: 1).
+- `entryType`: value can be `Message`, `TypingStartedIndicator`, `TypingStoppedIndicator`.
+
+##### GET `/api/v1/conversationEntry` — Fetch conversation entries as an external bot
+
+Example request to retrieve entries from a conversation, be sure to replace placeholder values `<..>`
+
+```bash
+curl -v \
+-H "Authorization: Bearer <AccessToken>" \
+-H "content-type: application/json" \
+-H "OrgId: <OrgId>" \
+-H "AuthorizationContext: <AuthorizationContext>" \
+-H "AuthorizationContextType: ExternalConversationParticipant" \
+-H "RequestId: <RequestId>" \
+-X GET -d '{
+  "conversationIdentifier": "<conversationIdentifier>",
+  "startTime": <Timestamp in Unix Epoch Milliseconds>,
+  "endTime": <Timestamp in Unix Epoch Milliseconds>,
+  "limit": <maxEntriesToReturn>,
+  "direction": "<FROM_START|FROM_END>"
+}' http://localhost:8085/api/v1/conversationEntry
+```
+
+- `conversationIdentifier` and `startTime` are required. `endTime`, `limit`, and `direction` are optional.
+- `direction` accepted values: `FROM_START`, `FROM_END`.
+- Returns `200 OK` with the list of conversation entries.
+
+#### Attachment API
+
+The `/attachment` API allows chatBots to send attachments as part of a message within a conversation. The API supports multipart form data for file uploads and includes necessary metadata to associate the attachment with a conversation.
+
+```bash
+curl -v \
+-H "Authorization: Bearer <AccessToken>" \
+-H "OrgId: <OrgId>" \
+-H "AuthorizationContext: <AuthorizationContext>" \
+-H "AuthorizationContextType: EXTERNALCONVERSATIONPARTICIPANT" \
+-H "RequestId: <RequestId>" \
+-X POST \
+-F "postAttachmentRequestJson={
+\"conversationIdentifier\":\"<conversationId>\",
+\"sender\":{\"subject\":\"<senderSubject>\"},
+\"conversationEntries\":
+[{\"clientTimestamp\":<timestamp>,
+\"id\":\"<entryId>\",
+\"attachmentIndex\":0,
+\"contentLength\":12345}]};type=application/json" \
+-F "attachments=@/path/to/file.jpg" \
+http://localhost:8085/api/v1/attachment
+```
+
+**Notes:**
+- Ensure the `attachments` array contains exactly **one** file.
+- The `RequestId` header should be a **UUID** unique to each request.
+- The `AuthorizationContextType` should be a valid type defined in the API.
+
 #### ConversationHistory API
 
 The API supports validation to ensure that partners don’t import conversations older than 24 hrs.
