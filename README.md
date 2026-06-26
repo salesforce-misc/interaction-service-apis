@@ -265,6 +265,16 @@ curl -v -H $'Authorization: Bearer <AccessToken>' -H "content-type:application/j
 }"  http://localhost:8085/api/v1/agentWork
 ```
 
+- AgentWork request to close a user's agent work.
+
+```bash
+curl -v -H $'Authorization: Bearer <AccessToken>' -H "content-type:application/json" -H "OrgId:<OrgId>" -H "AuthorizationContext:<AuthorizationContext>" -H "AuthorizationContextType: <AuthorizationContextType>" -H "RequestId: <RequestId>" -X PATCH -d "{
+  \"workId\": \"<WorkId>\",
+  \"status\": \"Close\",
+  \"contextType\": \"Agent\"
+ }"  http://localhost:8085/api/v1/agentWork
+```
+
 **Note**: When test the example request commands above, replace the request url "http://localhost:8085/api/v1/agentWork" with an url with the pattern of "https://\<your org my domain name\>.my.salesforce-scrt.com/api/v1/agentWork".
 
 ### Consent Status API
