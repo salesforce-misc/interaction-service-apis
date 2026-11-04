@@ -125,6 +125,37 @@
 | 25006      | We couldn't find the conversation for workItemId \<workItemId\>. Verify that the conversation exists, then try again.                                                      |
 | 25007      | We couldn't find conversationId for workItemId \<workItemId\>. Verify that the conversation exists, then try again.                                                        |
 
+## Route API Routing Errors
+
+`POST /v1/route` returns HTTP 202 when the request was accepted but the conversation could not be routed.
+In that case, `success` is `false` and the `errors` object describes the failure:
+
+| Field          | Description                                                                             |
+|----------------|-----------------------------------------------------------------------------------------|
+| `apiErrorCode` | Stable error code. Use this value for handling logic.                                   |
+| `errorType`    | Error category: `BadRequest`, `Error`, `INVALID_STATE`, or `RETRYABLE_INTERNAL_ERROR`.  |
+| `errorMessage` | Details for logging and troubleshooting. The text can change; don't parse it.           |
+
+Requests that fail validation or authorization return a 4xx or 5xx HTTP status with a numeric code listed in the sections above.
+
+| apiErrorCode                | errorType                | Description                                                                                         | Retry                                                          |
+|-----------------------------|--------------------------|-----------------------------------------------------------------------------------------------------|----------------------------------------------------------------|
+| ROUTING_ALREADY_IN_PROGRESS | INVALID_STATE            | A routing attempt is already in progress for this conversation.                                     | No. Cancel routing with DELETE /v1/route before routing again. |
+| INTERNAL_SERVER_ERROR       | RETRYABLE_INTERNAL_ERROR | A temporary error occurred while processing the routing request.                                    | Yes, with exponential backoff (max 3).                         |
+| CONVERSATION_ID_INVALID     | Error                    | The conversation doesn't exist.                                                                     | No                                                             |
+| CONVERSATION_DELETED        | Error                    | The conversation was deleted.                                                                       | No                                                             |
+| CHANNEL_DOES_NOT_EXIST      | BadRequest               | The conversation channel couldn't be found.                                                         | No                                                             |
+| NO_ROUTING_INFO_AVAILABLE   | Error                    | No routing information is available for this conversation's channel.                                | No                                                             |
+| NO_SESSION_FOUND_TO_ROUTE   | Error                    | The conversation has no open messaging session to route.                                            | No                                                             |
+| NO_MESSAGING_END_USER_FOUND | BadRequest               | The Messaging End User couldn't be found.                                                           | No                                                             |
+| USER_NOT_FULLY_OPTED_IN     | BadRequest               | The Messaging End User isn't fully opted in.                                                        | No                                                             |
+| INVALID_ROUTING_CONFIG      | BadRequest               | The routing configuration (queue, flow, bot, user, or skills) isn't valid.                          | No. Correct the request.                                       |
+| ROUTING_VALIDATION_FAILED   | BadRequest               | Omni-Channel couldn't route the work with the given configuration. See `errorMessage` for details.  | No. Review the routing setup.                                  |
+| ROUTING_FAILED              | BadRequest               | Routing failed because of an unexpected error. See `errorMessage` for details.                      | No                                                             |
+| ROUTING_HOOK_ERROR          | Error                    | The channel couldn't prepare the routing request.                                                   | No                                                             |
+| UNEXPECTED_ERROR            | Error                    | An unexpected error occurred.                                                                       | Once. If it persists, contact Salesforce Support.              |
+| Any other value             | —                        | Unrecognized error.                                                                                 | No. Contact Salesforce Support.                                |
+
 ## Other Errors
 | Error Code | Description                                                                                                                                                                 |
 |------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
